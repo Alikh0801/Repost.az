@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+
+:root {
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+
+  --accent: #b4232a;
+  --accent-muted: color-mix(in srgb, var(--accent) 55%, white);
+
+  --sidebar-bg: #1e1612;
+  --sidebar-text: #f4ede4;
+  --sidebar-border: rgb(255 255 255 / 0.08);
+  --sidebar-muted-border: rgb(255 255 255 / 0.18);
+
+  --main-bg: #f2ebe2;
+  --main-text: #1a1410;
+}
+
+[data-theme="light"] {
+  --sidebar-bg: #ede4db;
+  --sidebar-text: #1e1612;
+  --sidebar-border: rgb(0 0 0 / 0.08);
+  --sidebar-muted-border: rgb(0 0 0 / 0.14);
+
+  --main-bg: #faf7f3;
+  --main-text: #1a1410;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  background: var(--main-bg);
+  color: var(--main-text);
+}
+
+#root {
+  min-height: 100dvh;
+}

@@ -1,0 +1,20 @@
+.app-shell {
+  display: flex;
+  min-height: 100dvh;
+  background: var(--main-bg);
+  color: var(--main-text);
+}
+
+.app-shell__main {
+  flex: 1;
+  min-width: 0;
+  padding: 1.5rem;
+}
+
+.app-shell__placeholder {
+  max-width: 40rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  opacity: 0.65;
+}
