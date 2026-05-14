@@ -20,4 +20,13 @@ export type AppMessages = {
   layout: {
     mainPlaceholder: string;
   };
+  nav: {
+    ariaLabel: string;
+    politics: string;
+    economy: string;
+    society: string;
+    sports: string;
+    incidents: string;
+    world: string;
+  };
 };

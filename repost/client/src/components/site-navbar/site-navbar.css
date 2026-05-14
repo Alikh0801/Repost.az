@@ -1,0 +1,85 @@
+.site-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  flex-shrink: 0;
+  padding: 0.55rem 1.5rem 0;
+  background: var(--main-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--main-text) 9%, transparent);
+}
+
+.site-navbar__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+  padding-bottom: 0.15rem;
+}
+
+.site-navbar__date {
+  margin: 0;
+  align-self: flex-start;
+  max-width: 100%;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  opacity: 0.68;
+}
+
+.site-navbar__nav {
+  width: 100%;
+  min-width: 0;
+}
+
+.site-nav__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem 3rem;
+  margin: 0;
+  padding: 0 0 0.45rem;
+  list-style: none;
+}
+
+.site-nav__item {
+  margin: 0;
+  padding: 0;
+}
+
+.site-nav__tab {
+  display: block;
+  margin: 0;
+  padding: 0.2rem 0;
+  font-family: var(--font-serif);
+  font-size: clamp(0.82rem, 1.05vw, 0.98rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: inherit;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  opacity: 0.82;
+  transition:
+    opacity 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.site-nav__tab:hover {
+  opacity: 1;
+}
+
+.site-nav__tab[data-active="true"] {
+  opacity: 1;
+  border-bottom-color: var(--accent);
+}
+
+.site-nav__tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}

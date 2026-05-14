@@ -20,6 +20,15 @@ export const az: AppMessages = {
   },
   layout: {
     mainPlaceholder:
-      "Əsas məzmun (navbar, hero slayder və xəbər şəbəkəsi) növbəti addımda əlavə olunacaq.",
+      "Hero slayder və xəbər şəbəkəsi növbəti addımda əlavə olunacaq.",
+  },
+  nav: {
+    ariaLabel: "Kateqoriyalar",
+    politics: "Siyasət",
+    economy: "İqtisadiyyat",
+    society: "Sosial",
+    sports: "İdman",
+    incidents: "Hadisə",
+    world: "Dünya",
   },
 };
