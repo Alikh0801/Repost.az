@@ -103,7 +103,7 @@ export function SiteSidebar() {
     <aside className="site-sidebar" aria-label={t("sidebar.ariaNav")}>
       <header className="site-sidebar__brand">
         <div className="site-sidebar__brand-title">
-          <span className="site-sidebar__logo">Repost</span>
+          <span className="site-sidebar__logo">RePost</span>
           <span className="site-sidebar__logo-dot">.az</span>
         </div>
         <p className="site-sidebar__tagline">{t("sidebar.brandTagline")}</p>
