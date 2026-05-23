@@ -1,56 +1,47 @@
 # API — Render deploy
 
-Client: [https://repost-az.vercel.app](https://repost-az.vercel.app)  
-API (gözlənilən): `https://repost-api.onrender.com`
+Client: https://repost-az.vercel.app  
+Sizin API URL (nümunə): `https://repost-api-ljuf.onrender.com`  
+`repost/client/vercel.json`-də **öz Render URL-iniz** olmalıdır.
 
-## 1. Render.com
+## Render Web Service tənzimləri
 
-1. [render.com](https://render.com) → **New +** → **Web Service**
-2. GitHub repo bağlayın
-3. **Root Directory:** `repost/server`
-4. **Name:** `repost-api` (URL: `https://repost-api.onrender.com` — `vercel.json` ilə uyğun olmalıdır)
-5. **Runtime:** Node
-6. **Build Command:**
-   ```bash
-   npm install && npx prisma generate && npm run build
-   ```
-7. **Start Command:**
-   ```bash
-   npm run start:prod
-   ```
+| Parametr | Dəyər |
+|----------|--------|
+| **Root Directory** | `repost/server` |
+| **Build Command** | `npm ci --include=dev && npx prisma generate && npm run build` |
+| **Start Command** | `npm run start:prod` |
 
-## 2. Environment Variables (Render panel)
+### Exit 127 (build failed) — ən çox səbəblər
 
-Supabase-dən kopyalayın (`repost/server/.env`-dən):
+1. **Root Directory boşdur** → `repost/server` yazın  
+2. **`NODE_ENV=production` build zamanı** → `nest` və `prisma` quraşdırılmır (devDependencies atlanır)  
+   - Build Command mütləq `--include=dev` ilə olsun (yuxarıdakı kimi)  
+3. Köhnə build: `npm install` əvəzinə `npm ci --include=dev` istifadə edin
 
-| Key | Nümunə |
-|-----|--------|
+`NODE_ENV=production` Render-də **qala bilər** — build command dev paketləri yükləməlidir.
+
+## Environment Variables
+
+| Key | Qeyd |
+|-----|------|
 | `NODE_ENV` | `production` |
-| `DATABASE_URL` | `postgresql://...` |
-| `DIRECT_URL` | `postgresql://...` |
-| `JWT_SECRET` | uzun təsadüfi sətir |
+| `DATABASE_URL` | Supabase URL (**`production` key YOX**) |
+| `DIRECT_URL` | Supabase URL |
+| `JWT_SECRET` | uzun sətir |
 | `JWT_EXPIRES_IN` | `7d` |
 | `CORS_ORIGINS` | `https://repost-az.vercel.app,http://localhost:5173,http://localhost:5174` |
-| `PUBLIC_BASE_URL` | `https://repost-api.onrender.com` |
+| `PUBLIC_BASE_URL` | `https://SIZIN-SERVICE.onrender.com` (sonunda `/` yox) |
 | `SITE_URL` | `https://repost-az.vercel.app` |
 | `VIEW_BOOST_ENABLED` | `true` |
 
-## 3. Deploy sonrası
+## Deploy sonrası
 
-Brauzerdə yoxlayın:
+1. `https://SIZIN-SERVICE.onrender.com/api/v1/health` → `{"status":"ok"}`  
+2. `https://SIZIN-SERVICE.onrender.com/api/v1/articles/featured` → JSON  
+3. `vercel.json`-də Render hostunu yeniləyin → Vercel **Redeploy**  
+4. `https://repost-az.vercel.app/api/v1/articles/featured` → JSON  
 
-- `https://repost-api.onrender.com/api/v1/health` (əgər health var)
-- `https://repost-api.onrender.com/api/v1/articles/featured`
+## Vercel proxy
 
-Sonra Vercel:
-
-- `https://repost-az.vercel.app/api/v1/articles/featured`
-
-## 4. Vercel Redeploy
-
-Render URL fərqlidirsə (`repost-api` deyil), `repost/client/vercel.json`-də `repost-api.onrender.com`-u dəyişin və Vercel-də yenidən deploy edin.
-
-## Qeydlər
-
-- **Pulsuz Render** planı ~15 dəq idle-dan sonra yuxlayır; ilk sorğu 30–60 saniyə çəkə bilər.
-- Şəkil upload: `uploads/` Render-də müvəqqətidir; uzunmüddət üçün Supabase Storage tövsiyə olunur.
+`repost/client/vercel.json` içində `repost-api-ljuf.onrender.com` — Render paneldəki **real URL** ilə eyni olmalıdır.

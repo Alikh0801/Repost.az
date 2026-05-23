@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://repost-api.onrender.com/api/:path*"
+      "destination": "https://repost-api-ljuf.onrender.com/api/:path*"
     },
     {
       "source": "/sitemap.xml",
-      "destination": "https://repost-api.onrender.com/sitemap.xml"
+      "destination": "https://repost-api-ljuf.onrender.com/sitemap.xml"
     },
     {
       "source": "/robots.txt",
-      "destination": "https://repost-api.onrender.com/robots.txt"
+      "destination": "https://repost-api-ljuf.onrender.com/robots.txt"
     },
     {
       "source": "/(.*)",
