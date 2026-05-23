@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { useI18n } from "../../i18n";
 import type { AppMessagePath } from "../../i18n/paths";
 import { getFeaturedNews } from "../../shared/data/featured-news";
 import type { FeaturedNewsCategory } from "../../shared/data/featured-news";
+import { articleLinkProps, articlePath } from "../../shared/lib/article-path";
 import { formatArticleDate } from "../../shared/lib/format-article-date";
 import "./hero-slider.css";
 
@@ -138,14 +140,22 @@ export function HeroSlider() {
                   {formatArticleDate(slide.publishedAt, locale)}
                 </time>
                 <h2 className="hero-slider__title">
-                  <a className="hero-slider__title-link" href="#">
+                  <Link
+                    className="hero-slider__title-link"
+                    to={articlePath(slide.id)}
+                    {...articleLinkProps}
+                  >
                     {slide.title}
-                  </a>
+                  </Link>
                 </h2>
                 <p className="hero-slider__summary">{slide.summary}</p>
-                <a className="hero-slider__cta" href="#">
+                <Link
+                  className="hero-slider__cta"
+                  to={articlePath(slide.id)}
+                  {...articleLinkProps}
+                >
                   {t("hero.readMore")}
-                </a>
+                </Link>
               </div>
             </article>
           ))}

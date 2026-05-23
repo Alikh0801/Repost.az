@@ -35,6 +35,13 @@ export const ru: AppMessages = {
     today: "Сегодня",
     views: "просмотров",
   },
+  article: {
+    backToHome: "Вернуться на главную",
+    notFoundTitle: "Новость не найдена",
+    notFoundText: "Запрашиваемый материал не существует или был удалён.",
+    relatedTitle: "Похожие новости",
+    relatedHint: "Актуальные материалы из этой и других рубрик.",
+  },
   nav: {
     ariaLabel: "Рубрики",
     politics: "Политика",

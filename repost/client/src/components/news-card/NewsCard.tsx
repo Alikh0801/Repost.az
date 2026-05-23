@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useI18n } from "../../i18n";
 import type { CategoryNewsItem } from "../../shared/data/category-news";
+import { articleLinkProps, articlePath } from "../../shared/lib/article-path";
 import { formatNewsPublished } from "../../shared/lib/format-news-published";
 import { formatViewCount } from "../../shared/lib/format-view-count";
 import "./news-card.css";
@@ -41,9 +43,17 @@ export function NewsCard({ article, now }: NewsCardProps) {
     [article.viewCount, locale],
   );
 
+  const detailPath = articlePath(article.id);
+
   return (
     <article className="news-card">
-      <a className="news-card__media" href="#" tabIndex={-1} aria-hidden>
+      <Link
+        className="news-card__media"
+        to={detailPath}
+        {...articleLinkProps}
+        tabIndex={-1}
+        aria-hidden
+      >
         <img
           className="news-card__image"
           src={article.imageUrl}
@@ -51,7 +61,7 @@ export function NewsCard({ article, now }: NewsCardProps) {
           loading="lazy"
           decoding="async"
         />
-      </a>
+      </Link>
       <div className="news-card__body">
         <p className="news-card__meta">
           <span
@@ -72,9 +82,13 @@ export function NewsCard({ article, now }: NewsCardProps) {
           </time>
         </p>
         <h3 className="news-card__title">
-          <a className="news-card__title-link" href="#">
+          <Link
+            className="news-card__title-link"
+            to={detailPath}
+            {...articleLinkProps}
+          >
             {article.title}
-          </a>
+          </Link>
         </h3>
       </div>
     </article>

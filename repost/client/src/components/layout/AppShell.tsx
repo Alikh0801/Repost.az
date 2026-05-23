@@ -1,5 +1,5 @@
+import { Outlet } from "react-router-dom";
 import { CatalogProvider } from "../../app/context/catalog-context";
-import { HomePage } from "../../pages/home/HomePage";
 import { SiteSidebar } from "../site-sidebar/SiteSidebar";
 import "./app-shell.css";
 
@@ -9,7 +9,7 @@ export function AppShell() {
       <SiteSidebar />
       <CatalogProvider>
         <div className="app-shell__content">
-          <HomePage />
+          <Outlet />
         </div>
       </CatalogProvider>
     </div>

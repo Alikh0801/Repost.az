@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
-import { CATALOG } from "../../shared/types/catalog";
+import { CATALOG, type CatalogId } from "../../shared/types/catalog";
 import { formatNavbarDate } from "../../shared/lib/format-navbar-date";
 import { PageContainer } from "../page-container/PageContainer";
 import "./site-navbar.css";
@@ -11,7 +12,16 @@ const NAVBAR_DATE_TICK_MS = 60_000;
 export function SiteNavbar() {
   const { locale, t } = useI18n();
   const { activeCatalog, setActiveCatalog } = useCatalog();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [now, setNow] = useState(() => new Date());
+
+  const selectCatalog = (id: CatalogId) => {
+    setActiveCatalog(id);
+    if (pathname !== "/") {
+      navigate("/");
+    }
+  };
 
   useEffect(() => {
     const tick = () => setNow(new Date());
@@ -44,7 +54,7 @@ export function SiteNavbar() {
                   className="site-nav__tab"
                   data-active={activeCatalog === id}
                   aria-pressed={activeCatalog === id}
-                  onClick={() => setActiveCatalog(id)}
+                  onClick={() => selectCatalog(id)}
                 >
                   {t(labelKey)}
                 </button>

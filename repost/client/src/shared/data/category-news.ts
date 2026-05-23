@@ -1,4 +1,5 @@
 import type { AppLocale } from "../../i18n/types";
+import { buildLeadSummary } from "../lib/build-article-body";
 import type { CatalogId } from "../types/catalog";
 import {
   createExtraCategoryNewsSeeds,
@@ -9,6 +10,7 @@ export type CategoryNewsItem = {
   id: string;
   category: CatalogId;
   title: string;
+  summary?: string;
   imageUrl: string;
   imageAlt: string;
   publishedAt: string;
@@ -459,15 +461,24 @@ const BASE_SEEDS: NewsSeed[] = [
 const SEEDS: NewsSeed[] = [...BASE_SEEDS, ...createExtraCategoryNewsSeeds()];
 
 function mapSeeds(locale: AppLocale): CategoryNewsItem[] {
-  return SEEDS.map((seed) => ({
-    id: seed.id,
-    category: seed.category,
-    title: locale === "ru" ? seed.titleRu : seed.titleAz,
-    imageUrl: seed.imageUrl,
-    imageAlt: locale === "ru" ? seed.altRu : seed.altAz,
-    publishedAt: seed.publishedAt,
-    viewCount: seed.viewCount,
-  }));
+  return SEEDS.map((seed) => {
+    const title = locale === "ru" ? seed.titleRu : seed.titleAz;
+    const summary =
+      locale === "ru"
+        ? (seed.summaryRu ?? buildLeadSummary(title, locale))
+        : (seed.summaryAz ?? buildLeadSummary(title, locale));
+
+    return {
+      id: seed.id,
+      category: seed.category,
+      title,
+      summary,
+      imageUrl: seed.imageUrl,
+      imageAlt: locale === "ru" ? seed.altRu : seed.altAz,
+      publishedAt: seed.publishedAt,
+      viewCount: seed.viewCount,
+    };
+  });
 }
 
 const newsByLocale: Record<AppLocale, CategoryNewsItem[]> = {

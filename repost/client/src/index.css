@@ -20,6 +20,8 @@
   --page-padding-x: 0.980rem;
   --page-padding-y: 0.85rem;
   --page-gap: 0.85rem;
+  --article-max-width: 48rem;
+  --article-image-max-height: clamp(25rem, 36vh, 22rem);
   --ad-rail-width: clamp(10.5rem, 12vw, 18.75rem);
   --hero-slide-min-height: clamp(23rem, 36vh, 24rem);
   --hero-ad-height: clamp(13rem, min(36vh, 36vw), 24rem);

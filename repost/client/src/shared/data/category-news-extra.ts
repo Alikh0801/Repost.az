@@ -5,6 +5,8 @@ export type NewsSeed = {
   category: CatalogId;
   titleAz: string;
   titleRu: string;
+  summaryAz?: string;
+  summaryRu?: string;
   altAz: string;
   altRu: string;
   imageUrl: string;

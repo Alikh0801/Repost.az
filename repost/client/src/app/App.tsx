@@ -1,10 +1,10 @@
-import { AppShell } from "../components/layout/AppShell";
 import { AppProviders } from "./providers/AppProviders";
+import { AppRouter } from "./router";
 
 export default function App() {
   return (
     <AppProviders>
-      <AppShell />
+      <AppRouter />
     </AppProviders>
   );
 }

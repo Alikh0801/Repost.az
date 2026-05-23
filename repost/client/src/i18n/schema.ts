@@ -34,6 +34,13 @@ export type AppMessages = {
     today: string;
     views: string;
   };
+  article: {
+    backToHome: string;
+    notFoundTitle: string;
+    notFoundText: string;
+    relatedTitle: string;
+    relatedHint: string;
+  };
   nav: {
     ariaLabel: string;
     politics: string;

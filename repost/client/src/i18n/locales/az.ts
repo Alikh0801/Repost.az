@@ -35,6 +35,13 @@ export const az: AppMessages = {
     today: "Bugün",
     views: "oxunuş",
   },
+  article: {
+    backToHome: "Ana səhifəyə qayıt",
+    notFoundTitle: "Xəbər tapılmadı",
+    notFoundText: "Axtardığınız material mövcud deyil və ya silinib.",
+    relatedTitle: "Oxşar xəbərlər",
+    relatedHint: "Eyni rubrikadan və digər bölmələrdən seçilmiş aktual materiallar.",
+  },
   nav: {
     ariaLabel: "Kateqoriyalar",
     politics: "Siyasət",
