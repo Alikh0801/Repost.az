@@ -4,13 +4,21 @@ import { HeroSlider } from "../../components/hero-slider/HeroSlider";
 import { PageContainer } from "../../components/page-container/PageContainer";
 import { SiteNavbar } from "../../components/site-navbar/SiteNavbar";
 import { useI18n } from "../../i18n";
+import { PageMeta } from "../../shared/seo/PageMeta";
 import "./home-page.css";
 
 export function HomePage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
 
   return (
     <>
+      <PageMeta
+        title={t("seo.homeTitle")}
+        description={t("seo.homeDescription")}
+        canonicalPath="/"
+        locale={locale}
+        type="website"
+      />
       <SiteNavbar />
       <PageContainer as="main" className="home-page">
         <div className="home-page__layout">

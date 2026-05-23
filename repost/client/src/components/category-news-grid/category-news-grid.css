@@ -1,3 +1,13 @@
+.category-news-grid__status {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--main-text-muted);
+}
+
+.category-news-grid__status--error {
+  color: #b42318;
+}
+
 .category-news-grid__heading {
   margin: 0 0 1.1rem;
   font-family: var(--font-serif);
@@ -18,13 +28,14 @@
 }
 
 .category-news-grid__item {
+  display: flex;
   min-width: 0;
 }
 
 @media (min-width: 1600px) {
   .category-news-grid__list {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
   }
 }
 

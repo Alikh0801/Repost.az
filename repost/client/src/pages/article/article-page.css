@@ -22,6 +22,11 @@
   color: var(--accent);
 }
 
+.article-page__loading {
+  margin: 2rem 0;
+  color: var(--main-text-muted);
+}
+
 .article-page__not-found {
   max-width: 32rem;
   padding: 2rem 0;

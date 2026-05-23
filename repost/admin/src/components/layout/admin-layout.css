@@ -1,0 +1,90 @@
+.admin-shell {
+  display: grid;
+  grid-template-columns: 15rem 1fr;
+  min-height: 100vh;
+}
+
+.admin-shell__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.25rem 1rem;
+  background: #1a1d21;
+  color: #f2f2f2;
+}
+
+.admin-shell__brand-title {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.admin-shell__brand-sub {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #9aa3ad;
+}
+
+.admin-shell__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.admin-shell__link {
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.35rem;
+  color: #c8ced6;
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.admin-shell__link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.admin-shell__link--active {
+  background: #c45c26;
+  color: #fff;
+}
+
+.admin-shell__logout {
+  margin-top: auto;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.35rem;
+  background: transparent;
+  color: #e8e8e8;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.admin-shell__logout:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-shell__main {
+  padding: 1.5rem 1.75rem;
+  background: #f4f5f7;
+}
+
+@media (max-width: 768px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-shell__sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .admin-shell__logout {
+    margin-top: 0;
+    margin-left: auto;
+  }
+}

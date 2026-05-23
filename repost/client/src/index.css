@@ -23,8 +23,8 @@
   --article-max-width: 48rem;
   --article-image-max-height: clamp(25rem, 36vh, 22rem);
   --ad-rail-width: clamp(10.5rem, 12vw, 18.75rem);
-  --hero-slide-min-height: clamp(23rem, 36vh, 24rem);
-  --hero-ad-height: clamp(13rem, min(36vh, 36vw), 24rem);
+  --hero-slide-min-height: clamp(22rem, 32vh, 28rem);
+  --hero-ad-height: clamp(13rem, min(32vh, 36vw), 28rem);
   --news-ad-height: clamp(24rem, 62dvh, 46rem);
   --news-ad-height-laptop: clamp(28rem, 72vh, 42rem);
 }
@@ -72,4 +72,18 @@ body {
 
 #root {
   min-height: 100dvh;
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --hero-slide-min-height: clamp(26rem, 40vh, 34rem);
+    --hero-ad-height: clamp(16rem, min(40vh, 38vw), 34rem);
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --hero-slide-min-height: clamp(28rem, 44vh, 38rem);
+    --hero-ad-height: clamp(18rem, min(44vh, 40vw), 38rem);
+  }
 }

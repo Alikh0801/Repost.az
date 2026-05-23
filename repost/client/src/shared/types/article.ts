@@ -2,6 +2,7 @@ import type { CatalogId } from "./catalog";
 
 export type NewsArticle = {
   id: string;
+  slug: string;
   category: CatalogId;
   title: string;
   summary: string;

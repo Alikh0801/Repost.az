@@ -5,8 +5,12 @@ import {
 } from "@nestjs/common";
 import { ArticleStatus, Category, Prisma } from "@prisma/client";
 import slugify from "slugify";
-import { parseLocale } from "../common/locale";
 import { PrismaService } from "../prisma/prisma.service";
+import {
+  assertBothLocales,
+  contentToPrismaJson,
+  translationsToContent,
+} from "./article-content";
 import {
   toAdminArticle,
   toArticleDetail,
@@ -15,21 +19,11 @@ import {
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { UpdateArticleDto } from "./dto/update-article.dto";
 
-const articleInclude = {
-  translations: true,
-} satisfies Prisma.ArticleInclude;
-
 @Injectable()
 export class ArticlesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async listPublic(
-    localeInput: string,
-    category?: string,
-    page = 1,
-    limit = 20,
-  ) {
-    const locale = parseLocale(localeInput);
+  async listPublic(category?: string, page = 1, limit = 20) {
     const where: Prisma.ArticleWhereInput = {
       status: ArticleStatus.published,
       ...(category ? { category: category as Category } : {}),
@@ -39,19 +33,14 @@ export class ArticlesService {
       this.prisma.article.count({ where }),
       this.prisma.article.findMany({
         where,
-        include: articleInclude,
         orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
         skip: (page - 1) * limit,
         take: limit,
       }),
     ]);
 
-    const items = articles
-      .map((article) => toArticleListItem(article, locale))
-      .filter((item): item is NonNullable<typeof item> => item !== null);
-
     return {
-      items,
+      items: articles.map(toArticleListItem),
       page,
       limit,
       total,
@@ -59,47 +48,34 @@ export class ArticlesService {
     };
   }
 
-  async listFeatured(localeInput: string) {
-    const locale = parseLocale(localeInput);
+  async listFeatured() {
     const articles = await this.prisma.article.findMany({
       where: {
         status: ArticleStatus.published,
         isFeatured: true,
       },
-      include: articleInclude,
       orderBy: [{ featuredOrder: "asc" }, { publishedAt: "desc" }],
       take: 10,
     });
 
-    return articles
-      .map((article) => toArticleListItem(article, locale))
-      .filter((item): item is NonNullable<typeof item> => item !== null);
+    return articles.map(toArticleListItem);
   }
 
-  async getBySlugPublic(slug: string, localeInput: string) {
-    const locale = parseLocale(localeInput);
+  async getBySlugPublic(slug: string) {
     const article = await this.prisma.article.findFirst({
       where: { slug, status: ArticleStatus.published },
-      include: articleInclude,
     });
 
     if (!article) {
       throw new NotFoundException("Article not found");
     }
 
-    const mapped = toArticleDetail(article, locale);
-    if (!mapped) {
-      throw new NotFoundException("Article translation not found");
-    }
-
-    return mapped;
+    return toArticleDetail(article);
   }
 
-  async getRelated(slug: string, localeInput: string, limit = 6) {
-    const locale = parseLocale(localeInput);
+  async getRelated(slug: string, limit = 6) {
     const current = await this.prisma.article.findFirst({
       where: { slug, status: ArticleStatus.published },
-      include: articleInclude,
     });
 
     if (!current) {
@@ -111,7 +87,6 @@ export class ArticlesService {
         status: ArticleStatus.published,
         id: { not: current.id },
       },
-      include: articleInclude,
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
       take: 50,
     });
@@ -123,9 +98,7 @@ export class ArticlesService {
 
     const ordered = [...sameCategory, ...otherCategories].slice(0, limit);
 
-    return ordered
-      .map((article) => toArticleListItem(article, locale))
-      .filter((item): item is NonNullable<typeof item> => item !== null);
+    return ordered.map(toArticleListItem);
   }
 
   async incrementViews(slug: string) {
@@ -147,19 +120,19 @@ export class ArticlesService {
   }
 
   async listAdmin() {
-    const articles = await this.prisma.article.findMany({
-      include: articleInclude,
-      orderBy: [{ updatedAt: "desc" }],
-    });
+    const articles = await this.prisma.withRetry(() =>
+      this.prisma.article.findMany({
+        orderBy: [{ updatedAt: "desc" }],
+      }),
+    );
 
     return articles.map(toAdminArticle);
   }
 
   async getAdmin(id: string) {
-    const article = await this.prisma.article.findUnique({
-      where: { id },
-      include: articleInclude,
-    });
+    const article = await this.prisma.withRetry(() =>
+      this.prisma.article.findUnique({ where: { id } }),
+    );
 
     if (!article) {
       throw new NotFoundException("Article not found");
@@ -169,55 +142,61 @@ export class ArticlesService {
   }
 
   async create(dto: CreateArticleDto, userId: string) {
-    const slug = await this.resolveUniqueSlug(
-      dto.slug,
-      dto.translations[0]?.title ?? "article",
-    );
+    assertBothLocales(dto.translations);
+    const baseSlug =
+      this.buildSlug(
+        dto.slug?.trim() || dto.translations[0]?.title || "article",
+      ) || "article";
 
+    for (let attempt = 0; attempt < 15; attempt++) {
+      const slug = attempt === 0 ? baseSlug : `${baseSlug}-${attempt + 1}`;
+
+      try {
+        return await this.prisma.withRetry(() =>
+          this.persistNewArticle(slug, dto, userId),
+        );
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2002"
+        ) {
+          continue;
+        }
+        throw error;
+      }
+    }
+
+    throw new ConflictException("Slug already exists");
+  }
+
+  private async persistNewArticle(
+    slug: string,
+    dto: CreateArticleDto,
+    userId: string,
+  ) {
     const status = dto.status ?? ArticleStatus.draft;
     const publishedAt = this.resolvePublishedAt(status, dto.publishedAt);
+    const content = translationsToContent(dto.translations);
 
-    try {
-      const article = await this.prisma.article.create({
-        data: {
-          slug,
-          category: dto.category,
-          status,
-          isFeatured: dto.isFeatured ?? false,
-          featuredOrder: dto.featuredOrder,
-          coverImageUrl: dto.coverImageUrl,
-          publishedAt,
-          createdById: userId,
-          translations: {
-            create: dto.translations.map((t) => ({
-              locale: t.locale,
-              title: t.title,
-              summary: t.summary,
-              body: t.body,
-              imageAlt: t.imageAlt,
-            })),
-          },
-        },
-        include: articleInclude,
-      });
+    const article = await this.prisma.article.create({
+      data: {
+        slug,
+        category: dto.category,
+        status,
+        isFeatured: dto.isFeatured ?? false,
+        featuredOrder: dto.featuredOrder,
+        coverImageUrl: dto.coverImageUrl,
+        publishedAt,
+        createdById: userId,
+        content: contentToPrismaJson(content),
+      },
+    });
 
-      return toAdminArticle(article);
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2002"
-      ) {
-        throw new ConflictException("Slug already exists");
-      }
-      throw error;
-    }
+    return this.getAdmin(article.id);
   }
 
   async update(id: string, dto: UpdateArticleDto) {
-    const existing = await this.prisma.article.findUnique({
-      where: { id },
-      include: articleInclude,
-    });
+    const existing = await this.prisma.article.findUnique({ where: { id } });
 
     if (!existing) {
       throw new NotFoundException("Article not found");
@@ -225,7 +204,7 @@ export class ArticlesService {
 
     const slug =
       dto.slug !== undefined
-        ? await this.resolveUniqueSlug(dto.slug, dto.slug, id)
+        ? this.buildSlug(dto.slug.trim()) || existing.slug
         : undefined;
 
     const status = dto.status ?? existing.status;
@@ -236,53 +215,43 @@ export class ArticlesService {
           ? new Date()
           : existing.publishedAt;
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.article.update({
-        where: { id },
-        data: {
-          ...(slug !== undefined ? { slug } : {}),
-          ...(dto.category !== undefined ? { category: dto.category } : {}),
-          ...(dto.status !== undefined ? { status: dto.status } : {}),
-          ...(dto.isFeatured !== undefined
-            ? { isFeatured: dto.isFeatured }
-            : {}),
-          ...(dto.featuredOrder !== undefined
-            ? { featuredOrder: dto.featuredOrder }
-            : {}),
-          ...(dto.coverImageUrl !== undefined
-            ? { coverImageUrl: dto.coverImageUrl }
-            : {}),
-          publishedAt,
-        },
-      });
+    let contentUpdate: Prisma.InputJsonValue | undefined;
+    if (dto.translations?.length) {
+      assertBothLocales(dto.translations);
+      contentUpdate = contentToPrismaJson(translationsToContent(dto.translations));
+    }
 
-      if (dto.translations?.length) {
-        for (const translation of dto.translations) {
-          await tx.articleTranslation.upsert({
-            where: {
-              articleId_locale: {
-                articleId: id,
-                locale: translation.locale,
-              },
-            },
-            create: {
-              articleId: id,
-              locale: translation.locale,
-              title: translation.title,
-              summary: translation.summary,
-              body: translation.body,
-              imageAlt: translation.imageAlt,
-            },
-            update: {
-              title: translation.title,
-              summary: translation.summary,
-              body: translation.body,
-              imageAlt: translation.imageAlt,
-            },
-          });
-        }
+    try {
+      await this.prisma.withRetry(async () => {
+        await this.prisma.article.update({
+          where: { id },
+          data: {
+            ...(slug !== undefined ? { slug } : {}),
+            ...(dto.category !== undefined ? { category: dto.category } : {}),
+            ...(dto.status !== undefined ? { status: dto.status } : {}),
+            ...(dto.isFeatured !== undefined
+              ? { isFeatured: dto.isFeatured }
+              : {}),
+            ...(dto.featuredOrder !== undefined
+              ? { featuredOrder: dto.featuredOrder }
+              : {}),
+            ...(dto.coverImageUrl !== undefined
+              ? { coverImageUrl: dto.coverImageUrl }
+              : {}),
+            ...(contentUpdate !== undefined ? { content: contentUpdate } : {}),
+            publishedAt,
+          },
+        });
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new ConflictException("Slug already exists");
       }
-    });
+      throw error;
+    }
 
     return this.getAdmin(id);
   }
@@ -305,28 +274,5 @@ export class ArticlesService {
 
   private buildSlug(source: string): string {
     return slugify(source, { lower: true, strict: true, locale: "az" });
-  }
-
-  private async resolveUniqueSlug(
-    slugInput: string | undefined,
-    title: string,
-    excludeId?: string,
-  ): Promise<string> {
-    const base = this.buildSlug(slugInput?.trim() || title) || "article";
-    let candidate = base;
-    let suffix = 1;
-
-    while (await this.slugTaken(candidate, excludeId)) {
-      suffix += 1;
-      candidate = `${base}-${suffix}`;
-    }
-
-    return candidate;
-  }
-
-  private async slugTaken(slug: string, excludeId?: string): Promise<boolean> {
-    const existing = await this.prisma.article.findUnique({ where: { slug } });
-    if (!existing) return false;
-    return excludeId ? existing.id !== excludeId : true;
   }
 }

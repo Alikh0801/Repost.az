@@ -29,7 +29,7 @@ export const ru: AppMessages = {
   ad: {
     ariaLabel: "Реклама",
     label: "Реклама",
-    placeholder: "Здесь будет показан рекламный баннер",
+    placeholder: "Здесь может быть ваша реклама",
   },
   news: {
     today: "Сегодня",
@@ -50,5 +50,18 @@ export const ru: AppMessages = {
     sports: "Спорт",
     incidents: "Происшествия",
     world: "В мире",
+  },
+  common: {
+    loading: "Загрузка...",
+    error: "Произошла ошибка. Попробуйте позже.",
+    emptyCategory: "В этой рубрике пока нет новостей.",
+  },
+  seo: {
+    homeTitle: "Repost.az — Самый читаемый новостной портал Азербайджана",
+    homeDescription:
+      "Политика, экономика, спорт, общество и мировые новости. Repost.az — новостной портал Азербайджана.",
+    articleNotFoundTitle: "Новость не найдена | Repost.az",
+    articleNotFoundDescription:
+      "Запрошенная новость не найдена или удалена. Вернитесь на главную Repost.az.",
   },
 };

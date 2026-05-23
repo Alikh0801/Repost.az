@@ -1,27 +1,23 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useI18n } from "../../i18n";
-import { getRelatedArticles } from "../../shared/data/article-repository";
+import { useRelatedNews } from "../../shared/hooks/use-related-news";
 import { NewsCard } from "../news-card/NewsCard";
 import "./related-news-section.css";
 
 type RelatedNewsSectionProps = {
-  articleId: string;
+  articleSlug: string;
   limit?: number;
 };
 
 export function RelatedNewsSection({
-  articleId,
+  articleSlug,
   limit = 6,
 }: RelatedNewsSectionProps) {
-  const { locale, t } = useI18n();
+  const { t } = useI18n();
   const [now] = useState(() => new Date());
+  const { articles: related, loading } = useRelatedNews(articleSlug, limit);
 
-  const related = useMemo(
-    () => getRelatedArticles(articleId, locale, limit),
-    [articleId, locale, limit],
-  );
-
-  if (related.length === 0) return null;
+  if (loading || related.length === 0) return null;
 
   return (
     <section

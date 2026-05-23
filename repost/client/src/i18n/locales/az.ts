@@ -29,7 +29,7 @@ export const az: AppMessages = {
   ad: {
     ariaLabel: "Reklam",
     label: "Reklam",
-    placeholder: "Reklam banneri burada göstəriləcək",
+    placeholder: "Burada sizin reklamınız ola bilər",
   },
   news: {
     today: "Bugün",
@@ -50,5 +50,18 @@ export const az: AppMessages = {
     sports: "İdman",
     incidents: "Hadisə",
     world: "Dünya",
+  },
+  common: {
+    loading: "Yüklənir...",
+    error: "Xəta baş verdi. Bir az sonra yenidən cəhd edin.",
+    emptyCategory: "Bu rubrikada xəbər yoxdur.",
+  },
+  seo: {
+    homeTitle: "Repost.az — Azərbaycanın ən çox oxunan xəbər portalı",
+    homeDescription:
+      "Siyasət, iqtisadiyyat, idman, cəmiyyət və dünya xəbərləri. Repost.az — Azərbaycanın xəbər portalı.",
+    articleNotFoundTitle: "Xəbər tapılmadı | Repost.az",
+    articleNotFoundDescription:
+      "Axtardığınız xəbər tapılmadı və ya silinib. Repost.az ana səhifəsinə qayıdın.",
   },
 };

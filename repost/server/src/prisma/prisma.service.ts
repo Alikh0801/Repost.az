@@ -1,5 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
+
+const RETRYABLE_CODES = new Set(["P1001", "P1017"]);
 
 @Injectable()
 export class PrismaService
@@ -30,9 +32,35 @@ export class PrismaService
     }
   }
 
+  /** Supabase pooler bəzən bağlantını kəsir (P1017) — avtomatik yenidən cəhd */
+  async withRetry<T>(operation: () => Promise<T>, maxAttempts = 4): Promise<T> {
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const result = await operation();
+        this.connected = true;
+        return result;
+      } catch (error) {
+        lastError = error;
+        if (!this.isRetryable(error) || attempt >= maxAttempts) {
+          throw error;
+        }
+
+        this.logger.warn(
+          `DB connection lost (${this.errorCode(error)}), retry ${attempt}/${maxAttempts - 1}...`,
+        );
+        await this.reconnect();
+        await this.sleep(250 * attempt);
+      }
+    }
+
+    throw lastError;
+  }
+
   async ping(): Promise<boolean> {
     try {
-      await this.$queryRaw`SELECT 1`;
+      await this.withRetry(() => this.$queryRaw`SELECT 1`);
       this.connected = true;
       return true;
     } catch {
@@ -43,5 +71,31 @@ export class PrismaService
 
   isConnected() {
     return this.connected;
+  }
+
+  private isRetryable(error: unknown): boolean {
+    return (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      RETRYABLE_CODES.has(error.code)
+    );
+  }
+
+  private errorCode(error: unknown): string {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) return error.code;
+    return "unknown";
+  }
+
+  private async reconnect() {
+    try {
+      await this.$disconnect();
+    } catch {
+      /* ignore */
+    }
+    await this.$connect();
+    this.connected = true;
+  }
+
+  private sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

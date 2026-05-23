@@ -1,11 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Locale } from "@prisma/client";
-import { ArrayMinSize, IsArray, IsEnum, IsString, MinLength } from "class-validator";
+import { ArrayMinSize, IsArray, IsIn, IsString, MinLength } from "class-validator";
+import { APP_LOCALES } from "../../common/locale";
 
 export class ArticleTranslationDto {
-  @ApiProperty({ enum: Locale })
-  @IsEnum(Locale)
-  locale!: Locale;
+  @ApiProperty({ enum: APP_LOCALES })
+  @IsIn(APP_LOCALES)
+  locale!: (typeof APP_LOCALES)[number];
 
   @ApiProperty()
   @IsString()

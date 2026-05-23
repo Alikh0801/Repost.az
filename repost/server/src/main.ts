@@ -1,4 +1,4 @@
-import { ValidationPipe } from "@nestjs/common";
+import { RequestMethod, ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -18,7 +18,12 @@ async function bootstrap() {
     .filter(Boolean);
 
   app.enableCors({ origin: corsOrigins, credentials: true });
-  app.setGlobalPrefix("api/v1");
+  app.setGlobalPrefix("api/v1", {
+    exclude: [
+      { path: "sitemap.xml", method: RequestMethod.GET },
+      { path: "robots.txt", method: RequestMethod.GET },
+    ],
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -44,6 +49,7 @@ async function bootstrap() {
   console.log(`API listening on http://localhost:${port}/api/v1`);
   console.log(`Health:  http://localhost:${port}/api/v1/health`);
   console.log(`Swagger: http://localhost:${port}/docs`);
+  console.log(`Sitemap: http://localhost:${port}/sitemap.xml`);
 }
 
 void bootstrap();

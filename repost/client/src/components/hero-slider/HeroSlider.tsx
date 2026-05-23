@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../../i18n";
 import type { AppMessagePath } from "../../i18n/paths";
-import { getFeaturedNews } from "../../shared/data/featured-news";
-import type { FeaturedNewsCategory } from "../../shared/data/featured-news";
-import { articleLinkProps, articlePath } from "../../shared/lib/article-path";
+import { useFeaturedNews } from "../../shared/hooks/use-featured-news";
+import { articlePath } from "../../shared/lib/article-path";
+import type { CatalogId } from "../../shared/types/catalog";
 import { formatArticleDate } from "../../shared/lib/format-article-date";
 import "./hero-slider.css";
 
 const AUTOPLAY_MS = 7000;
 
-const CATEGORY_PATH: Record<FeaturedNewsCategory, AppMessagePath> = {
+const CATEGORY_PATH: Record<CatalogId, AppMessagePath> = {
   politics: "nav.politics",
   economy: "nav.economy",
   society: "nav.society",
@@ -42,7 +42,7 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
 
 export function HeroSlider() {
   const { locale, t } = useI18n();
-  const slides = useMemo(() => getFeaturedNews(locale), [locale]);
+  const { items: slides, loading } = useFeaturedNews();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const regionRef = useRef<HTMLElement>(null);
@@ -63,7 +63,7 @@ export function HeroSlider() {
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [locale]);
+  }, [locale, slides]);
 
   useEffect(() => {
     if (slideCount <= 1 || isPaused) return;
@@ -91,7 +91,7 @@ export function HeroSlider() {
     return () => node.removeEventListener("keydown", onKeyDown);
   }, [goNext, goPrev]);
 
-  if (slideCount === 0) return null;
+  if (loading || slideCount === 0) return null;
 
   return (
     <section
@@ -142,8 +142,7 @@ export function HeroSlider() {
                 <h2 className="hero-slider__title">
                   <Link
                     className="hero-slider__title-link"
-                    to={articlePath(slide.id)}
-                    {...articleLinkProps}
+                    to={articlePath(slide)}
                   >
                     {slide.title}
                   </Link>
@@ -151,8 +150,7 @@ export function HeroSlider() {
                 <p className="hero-slider__summary">{slide.summary}</p>
                 <Link
                   className="hero-slider__cta"
-                  to={articlePath(slide.id)}
-                  {...articleLinkProps}
+                  to={articlePath(slide)}
                 >
                   {t("hero.readMore")}
                 </Link>

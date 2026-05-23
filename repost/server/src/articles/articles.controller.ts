@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ArticlesService } from "./articles.service";
-import { ListArticlesQuery, LocaleQuery } from "./dto/list-articles.query";
+import { ListArticlesQuery } from "./dto/list-articles.query";
 
 @ApiTags("articles")
 @Controller("articles")
@@ -17,7 +17,6 @@ export class ArticlesController {
   @Get()
   list(@Query() query: ListArticlesQuery) {
     return this.articlesService.listPublic(
-      query.locale,
       query.category,
       query.page,
       query.limit,
@@ -25,13 +24,13 @@ export class ArticlesController {
   }
 
   @Get("featured")
-  featured(@Query() query: LocaleQuery) {
-    return this.articlesService.listFeatured(query.locale);
+  featured() {
+    return this.articlesService.listFeatured();
   }
 
   @Get(":slug/related")
-  related(@Param("slug") slug: string, @Query() query: LocaleQuery) {
-    return this.articlesService.getRelated(slug, query.locale);
+  related(@Param("slug") slug: string) {
+    return this.articlesService.getRelated(slug);
   }
 
   @Post(":slug/views")
@@ -40,7 +39,7 @@ export class ArticlesController {
   }
 
   @Get(":slug")
-  getOne(@Param("slug") slug: string, @Query() query: LocaleQuery) {
-    return this.articlesService.getBySlugPublic(slug, query.locale);
+  getOne(@Param("slug") slug: string) {
+    return this.articlesService.getBySlugPublic(slug);
   }
 }

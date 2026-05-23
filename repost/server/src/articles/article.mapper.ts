@@ -1,69 +1,66 @@
-import { Article, ArticleTranslation, Locale } from "@prisma/client";
-import { AppLocale } from "../common/locale";
+import { Article } from "@prisma/client";
+import type { AppLocale } from "../common/locale";
+import {
+  type ArticleContent,
+  contentToTranslations,
+  parseArticleContent,
+} from "./article-content";
 
-type ArticleWithTranslations = Article & {
-  translations: ArticleTranslation[];
-};
+type ArticleRow = Article;
 
-function pickTranslation(
-  article: ArticleWithTranslations,
-  locale: AppLocale,
-): ArticleTranslation | undefined {
-  return (
-    article.translations.find((t) => t.locale === locale) ??
-    article.translations.find((t) => t.locale === Locale.az)
-  );
+function localeSlice(content: ArticleContent, locale: AppLocale) {
+  return content[locale];
 }
 
-function parseBody(body: unknown): string[] {
-  if (!Array.isArray(body)) return [];
-  return body.filter((p): p is string => typeof p === "string");
-}
-
-export function toArticleListItem(
-  article: ArticleWithTranslations,
-  locale: AppLocale,
-) {
-  const translation = pickTranslation(article, locale);
-  if (!translation) return null;
+export function toArticleListItem(article: ArticleRow) {
+  const content = parseArticleContent(article.content);
 
   return {
     id: article.id,
     slug: article.slug,
     category: article.category,
-    title: translation.title,
-    summary: translation.summary,
     imageUrl: article.coverImageUrl ?? "",
-    imageAlt: translation.imageAlt,
-    publishedAt: article.publishedAt?.toISOString() ?? article.createdAt.toISOString(),
+    publishedAt:
+      article.publishedAt?.toISOString() ?? article.createdAt.toISOString(),
     viewCount: article.viewCount,
     isFeatured: article.isFeatured,
+    locales: {
+      az: {
+        title: content.az.title,
+        summary: content.az.summary,
+        imageAlt: content.az.imageAlt,
+      },
+      ru: {
+        title: content.ru.title,
+        summary: content.ru.summary,
+        imageAlt: content.ru.imageAlt,
+      },
+    },
   };
 }
 
-export function toArticleDetail(
-  article: ArticleWithTranslations,
-  locale: AppLocale,
-) {
-  const translation = pickTranslation(article, locale);
-  if (!translation) return null;
+export function toArticleDetail(article: ArticleRow) {
+  const content = parseArticleContent(article.content);
 
   return {
     id: article.id,
     slug: article.slug,
     category: article.category,
-    title: translation.title,
-    summary: translation.summary,
-    body: parseBody(translation.body),
     imageUrl: article.coverImageUrl ?? "",
-    imageAlt: translation.imageAlt,
-    publishedAt: article.publishedAt?.toISOString() ?? article.createdAt.toISOString(),
+    publishedAt:
+      article.publishedAt?.toISOString() ?? article.createdAt.toISOString(),
     viewCount: article.viewCount,
     isFeatured: article.isFeatured,
+    locales: {
+      az: localeSlice(content, "az"),
+      ru: localeSlice(content, "ru"),
+    },
   };
 }
 
-export function toAdminArticle(article: ArticleWithTranslations) {
+export function toAdminArticle(article: ArticleRow) {
+  const content = parseArticleContent(article.content);
+
   return {
     id: article.id,
     slug: article.slug,
@@ -76,12 +73,14 @@ export function toAdminArticle(article: ArticleWithTranslations) {
     viewCount: article.viewCount,
     createdAt: article.createdAt.toISOString(),
     updatedAt: article.updatedAt.toISOString(),
-    translations: article.translations.map((t) => ({
-      locale: t.locale,
-      title: t.title,
-      summary: t.summary,
-      body: parseBody(t.body),
-      imageAlt: t.imageAlt,
-    })),
+    translations: contentToTranslations(content),
   };
+}
+
+/** Köhnə API uyğunluğu — locale seçimi client-də edilir */
+export function pickLocaleFields<T extends { title: string; summary: string; imageAlt: string }>(
+  locales: { az: T; ru: T },
+  locale: AppLocale,
+): T {
+  return locales[locale];
 }

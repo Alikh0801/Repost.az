@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../../i18n";
-import type { CategoryNewsItem } from "../../shared/data/category-news";
-import { articleLinkProps, articlePath } from "../../shared/lib/article-path";
+import type { CategoryNewsItem } from "../../shared/types/category-news-item";
+import { articlePath } from "../../shared/lib/article-path";
 import { formatNewsPublished } from "../../shared/lib/format-news-published";
 import { formatViewCount } from "../../shared/lib/format-view-count";
 import "./news-card.css";
@@ -43,14 +43,13 @@ export function NewsCard({ article, now }: NewsCardProps) {
     [article.viewCount, locale],
   );
 
-  const detailPath = articlePath(article.id);
+  const detailPath = articlePath(article);
 
   return (
     <article className="news-card">
       <Link
         className="news-card__media"
         to={detailPath}
-        {...articleLinkProps}
         tabIndex={-1}
         aria-hidden
       >
@@ -85,7 +84,7 @@ export function NewsCard({ article, now }: NewsCardProps) {
           <Link
             className="news-card__title-link"
             to={detailPath}
-            {...articleLinkProps}
+            title={article.title}
           >
             {article.title}
           </Link>

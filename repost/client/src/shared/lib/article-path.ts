@@ -1,9 +1,4 @@
-export function articlePath(articleId: string): string {
-  return `/article/${encodeURIComponent(articleId)}`;
+export function articlePath(article: { slug: string } | string): string {
+  const slug = typeof article === "string" ? article : article.slug;
+  return `/article/${encodeURIComponent(slug)}`;
 }
-
-/** Xəbər linkləri yeni tabda açılır */
-export const articleLinkProps = {
-  target: "_blank",
-  rel: "noopener noreferrer",
-} as const;

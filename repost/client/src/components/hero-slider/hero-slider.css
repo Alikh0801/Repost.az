@@ -1,6 +1,7 @@
 .hero-slider {
   position: relative;
   width: 100%;
+  min-height: var(--hero-slide-min-height);
   border-radius: 0.35rem;
   overflow: hidden;
   background: var(--main-surface-raised);
@@ -10,6 +11,8 @@
 .hero-slider__viewport {
   overflow: hidden;
   width: 100%;
+  min-height: inherit;
+  height: 100%;
 }
 
 .hero-slider__track {

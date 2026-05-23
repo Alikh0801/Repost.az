@@ -31,7 +31,18 @@ npm run db:push
 npm run db:seed
 ```
 
-7. Cədvəllərə baxmaq: Supabase → **Table Editor** (`users`, `articles`, `article_translations`).
+7. Cədvəllərə baxmaq: Supabase → **Table Editor** (`users`, `articles` — məzmun `content` JSONB sütunundadır).
+
+**Köhnə `article_translations` cədvəli varsa:** SQL Editor-də `prisma/supabase-migrate-content.sql` işlədin.
+
+## SEO (sitemap / robots)
+
+Server `.env`-ə əlavə edin: `SITE_URL=https://sizin-domain.az` (sonunda `/` yox).
+
+- `https://sizin-domain.az/sitemap.xml` — dərc olunmuş xəbərlər
+- `https://sizin-domain.az/robots.txt`
+
+Client build üçün: `VITE_SITE_URL` eyni domain. Ətraflı: `repost/client/SEO.md`.
 
 ### P1001 — PC-dən serverə çatılmır
 

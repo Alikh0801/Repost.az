@@ -50,4 +50,15 @@ export type AppMessages = {
     incidents: string;
     world: string;
   };
+  seo: {
+    homeTitle: string;
+    homeDescription: string;
+    articleNotFoundTitle: string;
+    articleNotFoundDescription: string;
+  };
+  common: {
+    loading: string;
+    error: string;
+    emptyCategory: string;
+  };
 };

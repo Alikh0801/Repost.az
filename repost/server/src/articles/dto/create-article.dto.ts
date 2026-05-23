@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { ArticleStatus, Category } from "@prisma/client";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import {
   ArrayMinSize,
   IsArray,
@@ -19,6 +19,9 @@ import { ArticleTranslationDto } from "./article-translation.dto";
 export class CreateArticleDto {
   @ApiPropertyOptional()
   @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === "string" && value.trim() === "" ? undefined : value,
+  )
   @IsString()
   @MinLength(3)
   slug?: string;
@@ -44,6 +47,9 @@ export class CreateArticleDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === "string" && value.trim() === "" ? undefined : value,
+  )
   @IsUrl()
   coverImageUrl?: string;
 
@@ -52,9 +58,9 @@ export class CreateArticleDto {
   @IsDateString()
   publishedAt?: string;
 
-  @ApiProperty({ type: [ArticleTranslationDto] })
+  @ApiProperty({ type: [ArticleTranslationDto], minItems: 2, maxItems: 2 })
   @IsArray()
-  @ArrayMinSize(1)
+  @ArrayMinSize(2)
   @ValidateNested({ each: true })
   @Type(() => ArticleTranslationDto)
   translations!: ArticleTranslationDto[];

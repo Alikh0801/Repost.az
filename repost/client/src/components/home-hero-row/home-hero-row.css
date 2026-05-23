@@ -5,8 +5,21 @@
   align-items: stretch;
 }
 
+.home-hero-row__hero,
+.home-hero-row__ad {
+  display: flex;
+  flex-direction: column;
+  min-height: var(--hero-slide-min-height);
+}
+
 .home-hero-row__hero {
   min-width: 0;
+}
+
+.home-hero-row__hero .hero-slider,
+.home-hero-row__ad .ad-banner--hero-side {
+  flex: 1;
+  min-height: var(--hero-slide-min-height);
 }
 
 @media (max-width: 900px) {

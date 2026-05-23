@@ -12,6 +12,17 @@
   align-items: start;
 }
 
+@media (min-width: 1025px) {
+  .home-page__layout {
+    align-items: stretch;
+  }
+
+  .home-page__news,
+  .home-page__news-ad {
+    align-self: start;
+  }
+}
+
 .home-page__hero,
 .home-page__news {
   min-width: 0;
@@ -23,9 +34,28 @@
   width: 100%;
 }
 
-/* Hero reklamı — hero ilə birlikdə scroll olur */
-.home-page__hero-ad {
-  align-self: stretch;
+/* Hero + yan reklam — eyni hündürlük */
+@media (min-width: 1025px) {
+  .home-page__hero,
+  .home-page__hero-ad {
+    display: flex;
+    flex-direction: column;
+    min-height: var(--hero-slide-min-height);
+  }
+
+  .home-page__hero .hero-slider {
+    flex: 1;
+    min-height: var(--hero-slide-min-height);
+    height: 100%;
+  }
+
+  .home-page__hero-ad .ad-banner--hero-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: var(--hero-slide-min-height);
+  }
 }
 
 /* Xəbər reklamı — scroll zamanı yapışır */
