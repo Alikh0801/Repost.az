@@ -1,5 +1,9 @@
 node_modules/
 dist/
+
+# Secrets
 .env
+.env.*
+!.env.example
 uploads/*
 !uploads/.gitkeep
