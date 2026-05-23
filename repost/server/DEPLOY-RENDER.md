@@ -12,6 +12,10 @@ Sizin API URL (nümunə): `https://repost-api-ljuf.onrender.com`
 | **Build Command** | `npm ci --include=dev && npx prisma generate && npm run build` |
 | **Start Command** | `npm run start:prod` |
 
+### `Cannot find module .../dist/main.js` (start failed)
+
+Build uğurludur, amma fayl `dist/src/main.js`-də qalıbsa — `tsconfig.build.json` ilə `nest build` `dist/main.js` yaradır. Repo-nu push edib yenidən deploy edin.
+
 ### Exit 127 (build failed) — ən çox səbəblər
 
 1. **Root Directory boşdur** → `repost/server` yazın  
