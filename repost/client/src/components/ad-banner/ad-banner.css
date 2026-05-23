@@ -1,4 +1,5 @@
 .ad-banner {
+  width: 100%;
   min-width: 0;
 }
 
@@ -9,24 +10,24 @@
 }
 
 .ad-banner__frame {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.65rem;
-  min-height: clamp(16rem, 42vw, 26rem);
-  padding: 1rem;
+  gap: clamp(0.4rem, 1.2vw, 0.65rem);
+  width: 100%;
+  padding: clamp(0.65rem, 1.5vw, 1rem);
   text-align: center;
   border-radius: 0.35rem;
   border: 1px dashed var(--main-border);
   background: var(--main-surface);
   color: var(--main-text);
+  box-sizing: border-box;
 }
 
 .ad-banner__label {
   font-family: var(--font-sans);
-  font-size: 0.62rem;
+  font-size: clamp(0.55rem, 0.5rem + 0.2vw, 0.62rem);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -35,42 +36,86 @@
 
 .ad-banner__placeholder {
   margin: 0;
-  max-width: 12rem;
+  max-width: min(12rem, 90%);
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
   line-height: 1.45;
   opacity: 0.5;
 }
 
 .ad-banner__size {
   font-family: var(--font-sans);
-  font-size: 0.68rem;
+  font-size: clamp(0.58rem, 0.54rem + 0.15vw, 0.68rem);
   font-weight: 600;
   letter-spacing: 0.06em;
   opacity: 0.38;
 }
 
-.ad-banner--news-side {
-  width: 170px;
-  max-width: 100%;
-}
-
-.ad-banner--news-side .ad-banner__frame {
-  flex: none;
+/* 300×600 — hero yanı */
+.ad-banner--hero-side .ad-banner__frame {
   width: 100%;
+  height: auto;
+  min-height: 12rem;
+  max-height: var(--hero-slide-min-height);
+  aspect-ratio: 300 / 600;
+}
+
+/* 170×700 — xəbər yanı */
+.ad-banner--news-side .ad-banner__frame {
+  width: 100%;
+  height: auto;
   min-height: var(--news-ad-height);
-  height: var(--news-ad-height);
-  max-height: none;
-  padding: 0.75rem 0.5rem;
-  box-sizing: border-box;
+  max-height: min(
+    var(--news-ad-height),
+    calc(100dvh - var(--site-header-sticky-top) - 1.25rem)
+  );
+  aspect-ratio: 170 / 700;
 }
 
-.ad-banner--news-side .ad-banner__placeholder {
-  max-width: 7.5rem;
-  font-size: 0.72rem;
+/* Laptop — dar en aspect-i hündürlüyü sıxmasın */
+@media (min-width: 1025px) and (max-width: 1599px) {
+  .ad-banner--news-side .ad-banner__frame {
+    aspect-ratio: auto;
+    height: var(--news-ad-height-laptop);
+    min-height: var(--news-ad-height-laptop);
+    max-height: min(
+      var(--news-ad-height-laptop),
+      calc(100vh - var(--site-header-sticky-top) - 1.25rem)
+    );
+  }
 }
 
-.ad-banner--news-side .ad-banner__label,
-.ad-banner--news-side .ad-banner__size {
-  font-size: 0.58rem;
+/* Böyük monitor — bir az daha hündür */
+@media (min-width: 1600px) {
+  .ad-banner--news-side .ad-banner__frame {
+    min-height: clamp(26rem, 65dvh, 46rem);
+    max-height: min(
+      clamp(26rem, 65dvh, 46rem),
+      calc(100dvh - var(--site-header-sticky-top) - 1.25rem)
+    );
+  }
+}
+
+@media (max-width: 1024px) {
+  .ad-banner--hero-side .ad-banner__frame {
+    height: clamp(10rem, 32vw, 18rem);
+    max-height: none;
+    aspect-ratio: 300 / 600;
+  }
+
+  .ad-banner--news-side .ad-banner__frame {
+    min-height: clamp(16rem, 48vw, 28rem);
+    max-height: none;
+    aspect-ratio: 170 / 700;
+  }
+}
+
+@media (max-width: 640px) {
+  .ad-banner--hero-side .ad-banner__frame {
+    min-height: 9rem;
+  }
+
+  .ad-banner--news-side .ad-banner__frame {
+    min-height: clamp(12rem, 50vw, 20rem);
+  }
 }

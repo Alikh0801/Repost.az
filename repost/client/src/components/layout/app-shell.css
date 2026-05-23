@@ -13,9 +13,3 @@
   overflow: visible;
 }
 
-.app-shell__main {
-  flex: 1;
-  min-width: 0;
-  padding: 1.25rem 1.5rem 1.5rem;
-  overflow: visible;
-}

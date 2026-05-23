@@ -1,7 +1,6 @@
 .home-hero-row {
-  --hero-ad-width: clamp(13.5rem, 22vw, 18.75rem);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--hero-ad-width);
+  grid-template-columns: minmax(0, 1fr) var(--ad-rail-width);
   gap: 1.15rem;
   align-items: stretch;
 }

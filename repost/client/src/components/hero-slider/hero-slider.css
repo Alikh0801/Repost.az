@@ -22,7 +22,7 @@
 .hero-slider__slide {
   position: relative;
   flex: 0 0 100%;
-  min-height: clamp(16rem, 42vw, 26rem);
+  min-height: var(--hero-slide-min-height);
   display: flex;
   align-items: flex-end;
 }
@@ -84,7 +84,7 @@
 .hero-slider__title {
   margin: 0 0 0.65rem;
   font-family: var(--font-serif);
-  font-size: clamp(1.35rem, 2.8vw, 2.05rem);
+  font-size: clamp(1.2rem, 1.1rem + 0.45vw, 1.75rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: 0.01em;

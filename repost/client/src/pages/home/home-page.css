@@ -1,0 +1,64 @@
+.home-page {
+  flex: 1;
+  min-width: 0;
+  padding-block: var(--page-padding-y);
+}
+
+.home-page__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--ad-rail-width);
+  grid-template-rows: auto auto;
+  gap: var(--page-gap);
+  align-items: start;
+}
+
+.home-page__hero,
+.home-page__news {
+  min-width: 0;
+}
+
+.home-page__hero-ad,
+.home-page__news-ad {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Hero reklamı — hero ilə birlikdə scroll olur */
+.home-page__hero-ad {
+  align-self: stretch;
+}
+
+/* Xəbər reklamı — scroll zamanı yapışır */
+.home-page__news-ad {
+  position: sticky;
+  top: var(--site-header-sticky-top);
+  z-index: 15;
+  align-self: start;
+}
+
+.home-page__news {
+  margin-top: 0;
+}
+
+@media (max-width: 1024px) {
+  .home-page__layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .home-page__hero-ad,
+  .home-page__news-ad {
+    max-width: 20rem;
+    margin-inline: auto;
+  }
+
+  .home-page__news-ad {
+    position: static;
+  }
+
+  .home-page__layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--page-gap);
+  }
+}

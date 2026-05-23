@@ -3,6 +3,7 @@ import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
 import { CATALOG } from "../../shared/types/catalog";
 import { formatNavbarDate } from "../../shared/lib/format-navbar-date";
+import { PageContainer } from "../page-container/PageContainer";
 import "./site-navbar.css";
 
 const NAVBAR_DATE_TICK_MS = 60_000;
@@ -29,6 +30,7 @@ export function SiteNavbar() {
 
   return (
     <header className="site-navbar">
+      <PageContainer className="site-navbar__container">
       <div className="site-navbar__inner">
         <time className="site-navbar__date" dateTime={dateLabel.iso}>
           {dateLabel.label}
@@ -51,6 +53,7 @@ export function SiteNavbar() {
           </ul>
         </nav>
       </div>
+      </PageContainer>
     </header>
   );
 }
