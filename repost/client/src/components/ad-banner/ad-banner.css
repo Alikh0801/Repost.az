@@ -1,0 +1,76 @@
+.ad-banner {
+  min-width: 0;
+}
+
+.ad-banner--hero-side,
+.ad-banner--news-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.ad-banner__frame {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: clamp(16rem, 42vw, 26rem);
+  padding: 1rem;
+  text-align: center;
+  border-radius: 0.35rem;
+  border: 1px dashed var(--main-border);
+  background: var(--main-surface);
+  color: var(--main-text);
+}
+
+.ad-banner__label {
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.ad-banner__placeholder {
+  margin: 0;
+  max-width: 12rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  opacity: 0.5;
+}
+
+.ad-banner__size {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  opacity: 0.38;
+}
+
+.ad-banner--news-side {
+  width: 170px;
+  max-width: 100%;
+}
+
+.ad-banner--news-side .ad-banner__frame {
+  flex: none;
+  width: 100%;
+  min-height: var(--news-ad-height);
+  height: var(--news-ad-height);
+  max-height: none;
+  padding: 0.75rem 0.5rem;
+  box-sizing: border-box;
+}
+
+.ad-banner--news-side .ad-banner__placeholder {
+  max-width: 7.5rem;
+  font-size: 0.72rem;
+}
+
+.ad-banner--news-side .ad-banner__label,
+.ad-banner--news-side .ad-banner__size {
+  font-size: 0.58rem;
+}

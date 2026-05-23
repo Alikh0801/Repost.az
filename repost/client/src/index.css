@@ -7,23 +7,38 @@
   --accent: #b4232a;
   --accent-muted: color-mix(in srgb, var(--accent) 55%, white);
 
+  /* Sidebar — hər iki mövzuda eyni (tünd) */
   --sidebar-bg: #1e1612;
   --sidebar-text: #f4ede4;
   --sidebar-border: rgb(255 255 255 / 0.08);
   --sidebar-muted-border: rgb(255 255 255 / 0.18);
 
-  --main-bg: #f2ebe2;
-  --main-text: #1a1410;
+  --sidebar-width: 16.4rem;
+  --site-header-sticky-top: 5.75rem;
+  --news-ad-height: 700px;
 }
 
-[data-theme="light"] {
-  --sidebar-bg: #ede4db;
-  --sidebar-text: #1e1612;
-  --sidebar-border: rgb(0 0 0 / 0.08);
-  --sidebar-muted-border: rgb(0 0 0 / 0.14);
+/* Əsas məzmun — dark mode (default) */
+:root,
+[data-theme="dark"] {
+  --main-bg: #0f0d0b;
+  --main-text: #f2ebe2;
+  --main-text-muted: rgb(242 235 226 / 0.62);
+  --main-surface: #1a1613;
+  --main-surface-raised: #221e1a;
+  --main-border: rgb(255 255 255 / 0.1);
+  --main-shadow: rgb(0 0 0 / 0.4);
+}
 
+/* Əsas məzmun — light mode */
+[data-theme="light"] {
   --main-bg: #faf7f3;
   --main-text: #1a1410;
+  --main-text-muted: rgb(26 20 16 / 0.62);
+  --main-surface: #fffdfb;
+  --main-surface-raised: #ffffff;
+  --main-border: rgb(26 20 16 / 0.1);
+  --main-shadow: rgb(26 20 16 / 0.08);
 }
 
 *,

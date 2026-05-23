@@ -18,9 +18,22 @@ export const ru: AppMessages = {
     citationLine: "При использовании материалов ссылка на источник обязательна.",
     developedBy: "Developed by",
   },
-  layout: {
-    mainPlaceholder:
-      "Герой-слайдер и сетка новостей будут добавлены на следующем шаге.",
+  hero: {
+    ariaRegion: "Главные новости",
+    prevSlide: "Предыдущая новость",
+    nextSlide: "Следующая новость",
+    goToSlide: "Слайд",
+    slideList: "Слайды главных новостей",
+    readMore: "Читать далее",
+  },
+  ad: {
+    ariaLabel: "Реклама",
+    label: "Реклама",
+    placeholder: "Здесь будет показан рекламный баннер",
+  },
+  news: {
+    today: "Сегодня",
+    views: "просмотров",
   },
   nav: {
     ariaLabel: "Рубрики",

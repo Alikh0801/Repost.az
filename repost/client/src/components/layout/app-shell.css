@@ -1,27 +1,21 @@
 .app-shell {
-  display: flex;
   min-height: 100dvh;
   background: var(--main-bg);
   color: var(--main-text);
 }
 
 .app-shell__content {
-  flex: 1;
   min-width: 0;
+  min-height: 100dvh;
+  margin-left: var(--sidebar-width);
   display: flex;
   flex-direction: column;
+  overflow: visible;
 }
 
 .app-shell__main {
   flex: 1;
   min-width: 0;
   padding: 1.25rem 1.5rem 1.5rem;
-}
-
-.app-shell__placeholder {
-  max-width: 40rem;
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  line-height: 1.55;
-  opacity: 0.65;
+  overflow: visible;
 }

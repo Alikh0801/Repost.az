@@ -17,8 +17,22 @@ export type AppMessages = {
     citationLine: string;
     developedBy: string;
   };
-  layout: {
-    mainPlaceholder: string;
+  hero: {
+    ariaRegion: string;
+    prevSlide: string;
+    nextSlide: string;
+    goToSlide: string;
+    slideList: string;
+    readMore: string;
+  };
+  ad: {
+    ariaLabel: string;
+    label: string;
+    placeholder: string;
+  };
+  news: {
+    today: string;
+    views: string;
   };
   nav: {
     ariaLabel: string;

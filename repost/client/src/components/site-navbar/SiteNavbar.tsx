@@ -1,30 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { useI18n, type AppMessagePath } from "../../i18n";
+import { useCatalog } from "../../app/context/catalog-context";
+import { useI18n } from "../../i18n";
+import { CATALOG } from "../../shared/types/catalog";
 import { formatNavbarDate } from "../../shared/lib/format-navbar-date";
 import "./site-navbar.css";
 
 const NAVBAR_DATE_TICK_MS = 60_000;
 
-export type CatalogId =
-  | "politics"
-  | "economy"
-  | "society"
-  | "sports"
-  | "incidents"
-  | "world";
-
-const CATALOG: readonly { id: CatalogId; labelKey: AppMessagePath }[] = [
-  { id: "politics", labelKey: "nav.politics" },
-  { id: "economy", labelKey: "nav.economy" },
-  { id: "society", labelKey: "nav.society" },
-  { id: "sports", labelKey: "nav.sports" },
-  { id: "incidents", labelKey: "nav.incidents" },
-  { id: "world", labelKey: "nav.world" },
-] as const;
-
 export function SiteNavbar() {
   const { locale, t } = useI18n();
-  const [activeCatalog, setActiveCatalog] = useState<CatalogId>("politics");
+  const { activeCatalog, setActiveCatalog } = useCatalog();
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {

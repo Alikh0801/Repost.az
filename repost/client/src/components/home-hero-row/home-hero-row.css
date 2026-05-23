@@ -1,0 +1,21 @@
+.home-hero-row {
+  --hero-ad-width: clamp(13.5rem, 22vw, 18.75rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--hero-ad-width);
+  gap: 1.15rem;
+  align-items: stretch;
+}
+
+.home-hero-row__hero {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .home-hero-row {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero-row__ad .ad-banner__frame {
+    min-height: 8.5rem;
+  }
+}

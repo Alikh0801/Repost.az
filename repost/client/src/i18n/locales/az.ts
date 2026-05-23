@@ -18,9 +18,22 @@ export const az: AppMessages = {
     citationLine: "Məlumatdan istifadə zamanı mənbəyə istinad mütləqdir.",
     developedBy: "Developed by",
   },
-  layout: {
-    mainPlaceholder:
-      "Hero slayder və xəbər şəbəkəsi növbəti addımda əlavə olunacaq.",
+  hero: {
+    ariaRegion: "Əsas xəbərlər",
+    prevSlide: "Əvvəlki xəbər",
+    nextSlide: "Növbəti xəbər",
+    goToSlide: "Slayd",
+    slideList: "Əsas xəbər slaydları",
+    readMore: "Ətraflı oxu",
+  },
+  ad: {
+    ariaLabel: "Reklam",
+    label: "Reklam",
+    placeholder: "Reklam banneri burada göstəriləcək",
+  },
+  news: {
+    today: "Bugün",
+    views: "oxunuş",
   },
   nav: {
     ariaLabel: "Kateqoriyalar",
