@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: repost-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: repost
+      POSTGRES_PASSWORD: repost
+      POSTGRES_DB: repost
+    volumes:
+      - repost_pg_data:/var/lib/postgresql/data
+
+volumes:
+  repost_pg_data:

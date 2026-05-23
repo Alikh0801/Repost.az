@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Category {
+  politics
+  economy
+  society
+  sports
+  incidents
+  world
+}
+
+enum ArticleStatus {
+  draft
+  published
+  archived
+}
+
+enum Locale {
+  az
+  ru
+}
+
+enum UserRole {
+  admin
+  editor
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  role         UserRole  @default(editor)
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  articles     Article[]
+
+  @@map("users")
+}
+
+model Article {
+  id            String               @id @default(uuid())
+  slug          String               @unique
+  category      Category
+  status        ArticleStatus        @default(draft)
+  isFeatured    Boolean              @default(false) @map("is_featured")
+  featuredOrder Int?                 @map("featured_order")
+  coverImageUrl String?              @map("cover_image_url")
+  publishedAt   DateTime?            @map("published_at")
+  viewCount     Int                  @default(0) @map("view_count")
+  createdById   String?              @map("created_by_id")
+  createdBy     User?                @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+  translations  ArticleTranslation[]
+
+  @@index([category, status, publishedAt])
+  @@index([isFeatured, featuredOrder])
+  @@map("articles")
+}
+
+model ArticleTranslation {
+  id        String  @id @default(uuid())
+  articleId String  @map("article_id")
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  locale    Locale
+  title     String
+  summary   String
+  body      Json
+  imageAlt  String  @map("image_alt")
+
+  @@unique([articleId, locale])
+  @@map("article_translations")
+}
