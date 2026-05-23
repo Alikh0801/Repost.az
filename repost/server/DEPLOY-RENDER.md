@@ -39,9 +39,20 @@ Build uğurludur, amma fayl `dist/src/main.js`-də qalıbsa — `tsconfig.build.
 | `SITE_URL` | `https://repost-az.vercel.app` |
 | `VIEW_BOOST_ENABLED` | `true` |
 
+## Brauzerdə sadəcə `Not Found` (plain text)
+
+Response header-da `x-render-routing: no-server` varsa **Nest işləmir** — route səhv deyil.
+
+1. Render → **Logs** (runtime, build yox) — `Missing required environment variables` və ya crash sətri  
+2. **Web Service** olmalıdır (Static Site deyil)  
+3. Mütləq env: `DATABASE_URL`, `JWT_SECRET` (boş olmamalı)  
+4. **Manual Deploy** yenidən  
+
+Uğurlu cavab JSON-dur, məs: `{"ok":true,"database":true,...}`
+
 ## Deploy sonrası
 
-1. `https://SIZIN-SERVICE.onrender.com/api/v1/health` → `{"status":"ok"}`  
+1. `https://SIZIN-SERVICE.onrender.com/api/v1/health` → JSON (`ok: true`)  
 2. `https://SIZIN-SERVICE.onrender.com/api/v1/articles/featured` → JSON  
 3. `vercel.json`-də Render hostunu yeniləyin → Vercel **Redeploy**  
 4. `https://repost-az.vercel.app/api/v1/articles/featured` → JSON  
