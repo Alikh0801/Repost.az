@@ -1,7 +1,9 @@
 .home-page {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
   padding-block: var(--page-padding-y);
+  overflow-x: clip;
 }
 
 .home-page__layout {
@@ -72,23 +74,31 @@
 
 @media (max-width: 1024px) {
   .home-page__layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--page-gap);
     grid-template-columns: 1fr;
     grid-template-rows: auto;
   }
 
+  .home-page__hero,
+  .home-page__hero-ad {
+    min-height: 0;
+  }
+
+  .home-page__hero .hero-slider {
+    min-height: var(--hero-slide-min-height);
+    height: auto;
+  }
+
   .home-page__hero-ad,
   .home-page__news-ad {
-    max-width: 20rem;
-    margin-inline: auto;
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
   }
 
   .home-page__news-ad {
     position: static;
-  }
-
-  .home-page__layout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--page-gap);
   }
 }

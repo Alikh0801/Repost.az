@@ -10,6 +10,7 @@
   margin-left: var(--sidebar-width);
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow-x: clip;
+  max-width: calc(100vw - var(--sidebar-width));
 }
 
