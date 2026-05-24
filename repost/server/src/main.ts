@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import compression from "compression";
 import { join } from "path";
 import { AppModule } from "./app.module";
 
@@ -21,6 +22,7 @@ async function bootstrap() {
   assertRequiredEnv();
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.use(compression());
 
   const config = app.get(ConfigService);
   const port = Number(process.env.PORT) || config.get<number>("PORT", 3000);

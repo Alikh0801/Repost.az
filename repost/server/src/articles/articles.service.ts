@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 import { ArticleStatus, Category, Prisma } from "@prisma/client";
 import slugify from "slugify";
+import { TtlCache } from "../common/ttl-cache";
 import { PrismaService } from "../prisma/prisma.service";
 import {
   assertBothLocales,
@@ -19,11 +20,37 @@ import {
 import { CreateArticleDto } from "./dto/create-article.dto";
 import { UpdateArticleDto } from "./dto/update-article.dto";
 
+type PublicListResult = Awaited<ReturnType<ArticlesService["listPublicUncached"]>>;
+type FeaturedList = Awaited<ReturnType<ArticlesService["listFeaturedUncached"]>>;
+type ArticleDetail = Awaited<ReturnType<ArticlesService["getBySlugPublicUncached"]>>;
+type RelatedList = Awaited<ReturnType<ArticlesService["getRelatedUncached"]>>;
+
 @Injectable()
 export class ArticlesService {
+  private readonly featuredCache = new TtlCache<FeaturedList>(30_000);
+  private readonly listCache = new TtlCache<PublicListResult>(30_000);
+  private readonly articleCache = new TtlCache<ArticleDetail>(45_000);
+  private readonly relatedCache = new TtlCache<RelatedList>(60_000);
+  private readonly viewThrottle = new Map<string, number>();
+  private readonly viewThrottleMs = 60_000;
+
   constructor(private readonly prisma: PrismaService) {}
 
   async listPublic(category?: string, page = 1, limit = 20) {
+    const cacheKey = `list:${category ?? "all"}:${page}:${limit}`;
+    if (page === 1 && limit <= 30) {
+      const cached = this.listCache.get(cacheKey);
+      if (cached) return cached;
+    }
+
+    const result = await this.listPublicUncached(category, page, limit);
+    if (page === 1 && limit <= 30) {
+      this.listCache.set(cacheKey, result);
+    }
+    return result;
+  }
+
+  private async listPublicUncached(category?: string, page = 1, limit = 20) {
     const where: Prisma.ArticleWhereInput = {
       status: ArticleStatus.published,
       ...(category ? { category: category as Category } : {}),
@@ -49,6 +76,15 @@ export class ArticlesService {
   }
 
   async listFeatured() {
+    const cached = this.featuredCache.get("featured");
+    if (cached) return cached;
+
+    const items = await this.listFeaturedUncached();
+    this.featuredCache.set("featured", items);
+    return items;
+  }
+
+  private async listFeaturedUncached() {
     const articles = await this.prisma.article.findMany({
       where: {
         status: ArticleStatus.published,
@@ -62,6 +98,16 @@ export class ArticlesService {
   }
 
   async getBySlugPublic(slug: string) {
+    const cacheKey = `article:${slug}`;
+    const cached = this.articleCache.get(cacheKey);
+    if (cached) return cached;
+
+    const detail = await this.getBySlugPublicUncached(slug);
+    this.articleCache.set(cacheKey, detail);
+    return detail;
+  }
+
+  private async getBySlugPublicUncached(slug: string) {
     const article = await this.prisma.article.findFirst({
       where: { slug, status: ArticleStatus.published },
     });
@@ -74,6 +120,16 @@ export class ArticlesService {
   }
 
   async getRelated(slug: string, limit = 6) {
+    const cacheKey = `related:${slug}:${limit}`;
+    const cached = this.relatedCache.get(cacheKey);
+    if (cached) return cached;
+
+    const items = await this.getRelatedUncached(slug, limit);
+    this.relatedCache.set(cacheKey, items);
+    return items;
+  }
+
+  private async getRelatedUncached(slug: string, limit = 6) {
     const current = await this.prisma.article.findFirst({
       where: { slug, status: ArticleStatus.published },
     });
@@ -101,7 +157,22 @@ export class ArticlesService {
     return ordered.map(toArticleListItem);
   }
 
-  async incrementViews(slug: string) {
+  async incrementViews(slug: string, clientKey: string) {
+    const throttleKey = `${slug}:${clientKey}`;
+    const now = Date.now();
+    const throttleUntil = this.viewThrottle.get(throttleKey);
+
+    if (throttleUntil && now < throttleUntil) {
+      const article = await this.prisma.article.findFirst({
+        where: { slug, status: ArticleStatus.published },
+        select: { viewCount: true },
+      });
+      if (!article) {
+        throw new NotFoundException("Article not found");
+      }
+      return { viewCount: article.viewCount };
+    }
+
     const result = await this.prisma.article.updateMany({
       where: { slug, status: ArticleStatus.published },
       data: { viewCount: { increment: 1 } },
@@ -111,12 +182,26 @@ export class ArticlesService {
       throw new NotFoundException("Article not found");
     }
 
-    const article = await this.prisma.article.findUnique({
-      where: { slug },
+    this.viewThrottle.set(throttleKey, now + this.viewThrottleMs);
+    if (this.viewThrottle.size > 8_000) {
+      for (const [key, until] of this.viewThrottle) {
+        if (until <= now) this.viewThrottle.delete(key);
+      }
+    }
+
+    const article = await this.prisma.article.findFirst({
+      where: { slug, status: ArticleStatus.published },
       select: { viewCount: true },
     });
 
     return { viewCount: article?.viewCount ?? 0 };
+  }
+
+  private clearPublicCaches() {
+    this.featuredCache.clear();
+    this.listCache.clear();
+    this.articleCache.clear();
+    this.relatedCache.clear();
   }
 
   async listAdmin() {
@@ -192,6 +277,7 @@ export class ArticlesService {
       },
     });
 
+    this.clearPublicCaches();
     return this.getAdmin(article.id);
   }
 
@@ -253,12 +339,14 @@ export class ArticlesService {
       throw error;
     }
 
+    this.clearPublicCaches();
     return this.getAdmin(id);
   }
 
   async remove(id: string) {
     await this.getAdmin(id);
     await this.prisma.article.delete({ where: { id } });
+    this.clearPublicCaches();
     return { deleted: true };
   }
 

@@ -2,4 +2,5 @@
 export const STORAGE_KEYS = {
   theme: "repost-theme",
   locale: "repost-lang",
+  viewedArticles: "repost-viewed",
 } as const;

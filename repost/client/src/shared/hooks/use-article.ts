@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "../../i18n";
-import {
-  fetchArticleBySlug,
-  incrementArticleViews,
-} from "../api/articles";
+import { fetchArticleBySlug } from "../api/articles";
+import { recordArticleViewOnce } from "../lib/record-article-view";
 import { pickArticleDetail } from "../lib/pick-locale";
 import type { BilingualArticleDto } from "../types/bilingual";
 import type { NewsArticle } from "../types/article";
@@ -30,7 +28,7 @@ export function useArticle(slug: string | undefined) {
       .then((data) => {
         if (!cancelled) {
           setRaw(data);
-          incrementArticleViews(data.slug);
+          recordArticleViewOnce(data.slug);
         }
       })
       .catch((err) => {
