@@ -2,12 +2,14 @@
   "name": "@repost/server",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20 <=22"
+  },
   "scripts": {
-    "build": "nest build",
+    "build": "prisma generate && nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
-    "postinstall": "prisma generate",
     "lint": "eslint \"src/**/*.ts\"",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
