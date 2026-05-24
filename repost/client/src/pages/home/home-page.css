@@ -81,14 +81,13 @@
     grid-template-rows: auto;
   }
 
-  .home-page__hero,
-  .home-page__hero-ad {
-    min-height: 0;
+  .home-page__hero {
+    width: 100%;
+    min-height: var(--hero-slide-min-height);
   }
 
   .home-page__hero .hero-slider {
     min-height: var(--hero-slide-min-height);
-    height: auto;
   }
 
   .home-page__hero-ad,

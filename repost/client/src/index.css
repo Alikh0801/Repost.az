@@ -79,7 +79,7 @@ body {
   :root {
     --sidebar-width: var(--sidebar-width-mobile);
     --site-header-sticky-top: 5.25rem;
-    --hero-slide-min-height: clamp(13.5rem, 48vw, 17.5rem);
+    --hero-slide-min-height: clamp(14rem, 56vw, 19rem);
     --hero-ad-height: clamp(7rem, 22vw, 10rem);
     --page-padding-x: 0.65rem;
   }

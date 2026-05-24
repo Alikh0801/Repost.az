@@ -45,7 +45,9 @@ export function HeroSlider() {
   const { items: slides, loading } = useFeaturedNews();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(0);
   const regionRef = useRef<HTMLElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   const slideCount = slides.length;
 
@@ -72,6 +74,20 @@ export function HeroSlider() {
     }, AUTOPLAY_MS);
     return () => window.clearInterval(id);
   }, [isPaused, slideCount]);
+
+  useEffect(() => {
+    const node = viewportRef.current;
+    if (!node) return;
+
+    const updateWidth = () => {
+      setViewportWidth(node.clientWidth);
+    };
+
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [slides]);
 
   useEffect(() => {
     const node = regionRef.current;
@@ -108,15 +124,29 @@ export function HeroSlider() {
         }
       }}
     >
-      <div className="hero-slider__viewport">
+      <div className="hero-slider__viewport" ref={viewportRef}>
         <div
           className="hero-slider__track"
-          style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+          style={{
+            transform:
+              viewportWidth > 0
+                ? `translate3d(-${activeIndex * viewportWidth}px, 0, 0)`
+                : undefined,
+          }}
         >
           {slides.map((slide, index) => (
             <article
               key={slide.id}
               className="hero-slider__slide"
+              style={
+                viewportWidth > 0
+                  ? {
+                      flex: `0 0 ${viewportWidth}px`,
+                      width: viewportWidth,
+                      minWidth: viewportWidth,
+                    }
+                  : undefined
+              }
               aria-hidden={index !== activeIndex}
               aria-roledescription="slide"
               aria-label={`${index + 1} / ${slideCount}`}
