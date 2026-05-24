@@ -83,3 +83,32 @@
   outline-offset: 3px;
   border-radius: 2px;
 }
+
+@media (max-width: 899px) {
+  .site-navbar__date {
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+  }
+
+  .site-navbar__nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .site-navbar__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav__list {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0.5rem 1.25rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .site-nav__tab {
+    white-space: nowrap;
+    font-size: 0.8rem;
+  }
+}

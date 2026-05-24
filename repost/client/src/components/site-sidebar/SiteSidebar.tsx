@@ -50,13 +50,21 @@ function TelegramIcon() {
   );
 }
 
-function SunIcon({ className }: { className?: string }) {
+/** İşıq mövzusu — sadə günəş (kiçik ölçüdə aydın) */
+function LightModeIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden>
-      <path
-        fill="currentColor"
-        d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10M12 1.75a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1m6.95 3.05a1 1 0 0 1 0 1.41l-.71.71a1 1 0 1 1-1.41-1.41l.71-.71a1 1 0 0 1 1.41 0M21.25 11a1 1 0 0 1-1 1h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1m-2.54 7.54a1 1 0 0 1-1.41 0l-.71-.71a1 1 0 1 1 1.41-1.41l.71.71a1 1 0 0 1 0 1.41M12 19.25a1 1 0 0 1-1-1v-1a1 1 0 1 1 2 0v1a1 1 0 0 1-1 1m-7.54-2.54a1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.71.71a1 1 0 0 1-1.41 0M4.75 12a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1m3.05-6.95a1 1 0 0 1 1.41 0l.71.71a1 1 0 0 1-1.41 1.41l-.71-.71a1 1 0 0 1 0-1.41"
-      />
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
     </svg>
   );
 }
@@ -103,8 +111,13 @@ export function SiteSidebar() {
     <aside className="site-sidebar" aria-label={t("sidebar.ariaNav")}>
       <header className="site-sidebar__brand">
         <div className="site-sidebar__brand-title">
-          <span className="site-sidebar__logo">RePost</span>
-          <span className="site-sidebar__logo-dot">.az</span>
+          <span className="site-sidebar__logo-full">
+            <span className="site-sidebar__logo">RePost</span>
+            <span className="site-sidebar__logo-dot">.az</span>
+          </span>
+          <span className="site-sidebar__logo-short" aria-hidden>
+            R
+          </span>
         </div>
         <p className="site-sidebar__tagline">{t("sidebar.brandTagline")}</p>
         <div className="site-sidebar__brand-theme">
@@ -121,8 +134,8 @@ export function SiteSidebar() {
             >
               <span className="site-sidebar__theme-switch-thumb">
                 <span className="site-sidebar__theme-switch-icons" aria-hidden>
-                  <span className="site-sidebar__theme-switch-layer site-sidebar__theme-switch-layer--sun">
-                    <SunIcon className="site-sidebar__theme-switch-svg" />
+                  <span className="site-sidebar__theme-switch-layer site-sidebar__theme-switch-layer--light">
+                    <LightModeIcon className="site-sidebar__theme-switch-svg site-sidebar__theme-switch-svg--stroke" />
                   </span>
                   <span className="site-sidebar__theme-switch-layer site-sidebar__theme-switch-layer--moon">
                     <MoonIcon className="site-sidebar__theme-switch-svg" />
@@ -148,7 +161,7 @@ export function SiteSidebar() {
             aria-pressed={locale === "az"}
           >
             <FlagAzIcon className="site-sidebar__pill-flag" />
-            <span>AZ</span>
+            <span className="site-sidebar__pill-text">AZ</span>
           </button>
           <button
             type="button"
@@ -158,7 +171,7 @@ export function SiteSidebar() {
             aria-pressed={locale === "ru"}
           >
             <FlagRuIcon className="site-sidebar__pill-flag" />
-            <span>RU</span>
+            <span className="site-sidebar__pill-text">RU</span>
           </button>
         </div>
       </section>
@@ -170,27 +183,39 @@ export function SiteSidebar() {
             href="#"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={t("sidebar.socialInstagram")}
+            title={t("sidebar.socialInstagram")}
           >
             <InstagramIcon />
-            {t("sidebar.socialInstagram")}
+            <span className="site-sidebar__social-text">
+              {t("sidebar.socialInstagram")}
+            </span>
           </a>
           <a
             className="site-sidebar__social-link"
             href="#"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={t("sidebar.socialFacebook")}
+            title={t("sidebar.socialFacebook")}
           >
             <FacebookIcon />
-            {t("sidebar.socialFacebook")}
+            <span className="site-sidebar__social-text">
+              {t("sidebar.socialFacebook")}
+            </span>
           </a>
           <a
             className="site-sidebar__social-link"
             href="#"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={t("sidebar.socialTelegram")}
+            title={t("sidebar.socialTelegram")}
           >
             <TelegramIcon />
-            {t("sidebar.socialTelegram")}
+            <span className="site-sidebar__social-text">
+              {t("sidebar.socialTelegram")}
+            </span>
           </a>
         </nav>
       </section>
