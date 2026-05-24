@@ -147,7 +147,8 @@ export function SiteSidebar() {
         </div>
       </header>
 
-      <section className="site-sidebar__block">
+      <div className="site-sidebar__tools">
+      <section className="site-sidebar__block site-sidebar__block--lang">
         <div
           className="site-sidebar__pills"
           role="group"
@@ -176,7 +177,7 @@ export function SiteSidebar() {
         </div>
       </section>
 
-      <section className="site-sidebar__block">
+      <section className="site-sidebar__block site-sidebar__block--social">
         <nav className="site-sidebar__social" aria-label={t("sidebar.social")}>
           <a
             className="site-sidebar__social-link"
@@ -219,6 +220,7 @@ export function SiteSidebar() {
           </a>
         </nav>
       </section>
+      </div>
 
       <footer
         className="site-sidebar__footer site-sidebar__block site-sidebar__block--grow"

@@ -14,3 +14,18 @@
   max-width: calc(100vw - var(--sidebar-width));
 }
 
+@media (max-width: 899px) {
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .app-shell__content {
+    margin-left: 0;
+    max-width: 100%;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+  }
+}
+
