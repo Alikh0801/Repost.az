@@ -95,19 +95,14 @@
   }
 
   .site-navbar__nav {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .site-navbar__nav::-webkit-scrollbar {
-    display: none;
+    display: flex;
+    justify-content: center;
   }
 
   .site-nav__list {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 0.5rem 1.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35rem 0.9rem;
     padding-bottom: 0.35rem;
   }
 

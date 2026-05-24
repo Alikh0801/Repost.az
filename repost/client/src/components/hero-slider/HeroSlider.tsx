@@ -8,7 +8,8 @@ import type { CatalogId } from "../../shared/types/catalog";
 import { formatArticleDate } from "../../shared/lib/format-article-date";
 import "./hero-slider.css";
 
-const AUTOPLAY_MS = 7000;
+const AUTOPLAY_MS = 6000;
+const SWIPE_THRESHOLD_PX = 48;
 
 const CATEGORY_PATH: Record<CatalogId, AppMessagePath> = {
   politics: "nav.politics",
@@ -48,6 +49,7 @@ export function HeroSlider() {
   const [viewportWidth, setViewportWidth] = useState(0);
   const regionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const swipeRef = useRef<{ x: number; y: number; active: boolean } | null>(null);
 
   const slideCount = slides.length;
 
@@ -88,6 +90,66 @@ export function HeroSlider() {
     observer.observe(node);
     return () => observer.disconnect();
   }, [slides]);
+
+  useEffect(() => {
+    const node = viewportRef.current;
+    if (!node || slideCount <= 1) return;
+
+    const onTouchStart = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+      swipeRef.current = { x: touch.clientX, y: touch.clientY, active: true };
+      setIsPaused(true);
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      const start = swipeRef.current;
+      if (!start?.active) return;
+      const touch = event.touches[0];
+      if (!touch) return;
+
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+        event.preventDefault();
+      }
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+      const start = swipeRef.current;
+      swipeRef.current = null;
+      if (!start?.active) return;
+
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+
+      const dx = touch.clientX - start.x;
+      if (dx > SWIPE_THRESHOLD_PX) {
+        goPrev();
+      } else if (dx < -SWIPE_THRESHOLD_PX) {
+        goNext();
+      }
+
+      window.setTimeout(() => setIsPaused(false), 400);
+    };
+
+    const onTouchCancel = () => {
+      swipeRef.current = null;
+      setIsPaused(false);
+    };
+
+    node.addEventListener("touchstart", onTouchStart, { passive: true });
+    node.addEventListener("touchmove", onTouchMove, { passive: false });
+    node.addEventListener("touchend", onTouchEnd, { passive: true });
+    node.addEventListener("touchcancel", onTouchCancel, { passive: true });
+
+    return () => {
+      node.removeEventListener("touchstart", onTouchStart);
+      node.removeEventListener("touchmove", onTouchMove);
+      node.removeEventListener("touchend", onTouchEnd);
+      node.removeEventListener("touchcancel", onTouchCancel);
+    };
+  }, [goNext, goPrev, slideCount]);
 
   useEffect(() => {
     const node = regionRef.current;
