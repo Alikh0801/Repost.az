@@ -29,3 +29,11 @@ services:
         value: https://repost-az.vercel.app
       - key: VIEW_BOOST_ENABLED
         value: true
+      - key: VIEW_BOOST_WINDOW_HOURS
+        value: "6"
+      - key: VIEW_BOOST_MIN
+        value: "30"
+      - key: VIEW_BOOST_MAX
+        value: "40"
+      - key: VIEW_BOOST_INTERVAL_MS
+        value: "300000"
