@@ -38,13 +38,13 @@ export class ArticlesService {
 
   async listPublic(category?: string, page = 1, limit = 20) {
     const cacheKey = `list:${category ?? "all"}:${page}:${limit}`;
-    if (page === 1 && limit <= 30) {
+    if (page === 1 && limit <= 100) {
       const cached = this.listCache.get(cacheKey);
       if (cached) return cached;
     }
 
     const result = await this.listPublicUncached(category, page, limit);
-    if (page === 1 && limit <= 30) {
+    if (page === 1 && limit <= 100) {
       this.listCache.set(cacheKey, result);
     }
     return result;
