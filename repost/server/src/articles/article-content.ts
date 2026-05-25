@@ -22,31 +22,85 @@ export function emptyArticleContent(): ArticleContent {
   return { az: emptyLocaleContent(), ru: emptyLocaleContent() };
 }
 
+export function assertAzLocale(translations: ArticleTranslationDto[]): void {
+  const az = translations.find((t) => t.locale === "az");
+  if (!az) {
+    throw new BadRequestException("Azərbaycan tərcüməsi mütləqdir");
+  }
+  if (az.title.trim().length < 3) {
+    throw new BadRequestException(
+      "Azərbaycan başlığı ən azı 3 simvol olmalıdır",
+    );
+  }
+  if (az.summary.trim().length < 10) {
+    throw new BadRequestException(
+      "Azərbaycan xülasəsi ən azı 10 simvol olmalıdır",
+    );
+  }
+  const body = (az.body ?? []).map((p) => p.trim()).filter(Boolean);
+  if (body.length < 1) {
+    throw new BadRequestException("Azərbaycan mətni boş ola bilməz");
+  }
+}
+
+function ruHasPartialInput(t: ArticleTranslationDto): boolean {
+  const title = t.title?.trim() ?? "";
+  const summary = t.summary?.trim() ?? "";
+  const body = (t.body ?? []).map((p) => p.trim()).filter(Boolean);
+  return title.length > 0 || summary.length > 0 || body.length > 0;
+}
+
+function assertRuLocaleIfPartial(t: ArticleTranslationDto): void {
+  if (!ruHasPartialInput(t)) return;
+  if (t.title.trim().length < 3) {
+    throw new BadRequestException(
+      "Rus başlığı doldurulubsa, ən azı 3 simvol olmalıdır",
+    );
+  }
+  if (t.summary.trim().length < 10) {
+    throw new BadRequestException(
+      "Rus xülasəsi doldurulubsa, ən azı 10 simvol olmalıdır",
+    );
+  }
+  const body = t.body.map((p) => p.trim()).filter(Boolean);
+  if (body.length < 1) {
+    throw new BadRequestException(
+      "Rus mətni doldurulubsa, boş ola bilməz",
+    );
+  }
+}
+
 export function translationsToContent(
   translations: ArticleTranslationDto[],
 ): ArticleContent {
-  assertBothLocales(translations);
-  const content = emptyArticleContent();
-  for (const t of translations) {
-    content[t.locale] = {
-      title: t.title,
-      summary: t.summary,
-      body: t.body,
-      imageAlt: t.imageAlt,
+  assertAzLocale(translations);
+
+  const az = translations.find((t) => t.locale === "az")!;
+  const ru = translations.find((t) => t.locale === "ru");
+  if (ru) assertRuLocaleIfPartial(ru);
+
+  const azTitle = az.title.trim();
+  const content: ArticleContent = {
+    az: {
+      title: azTitle,
+      summary: az.summary.trim(),
+      body: az.body.map((p) => p.trim()).filter(Boolean),
+      imageAlt: (az.imageAlt || azTitle).trim(),
+    },
+    ru: emptyLocaleContent(),
+  };
+
+  if (ru && ruHasPartialInput(ru)) {
+    const ruTitle = ru.title.trim();
+    content.ru = {
+      title: ruTitle,
+      summary: ru.summary.trim(),
+      body: ru.body.map((p) => p.trim()).filter(Boolean),
+      imageAlt: (ru.imageAlt || ruTitle).trim(),
     };
   }
-  return content;
-}
 
-export function assertBothLocales(translations: ArticleTranslationDto[]): void {
-  const locales = new Set(translations.map((t) => t.locale));
-  for (const locale of LOCALES) {
-    if (!locales.has(locale)) {
-      throw new BadRequestException(
-        `Hər iki dil mütləqdir: az və ru tərcümələri doldurulmalıdır`,
-      );
-    }
-  }
+  return content;
 }
 
 export function parseArticleContent(raw: unknown): ArticleContent {

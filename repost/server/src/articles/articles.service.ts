@@ -8,7 +8,7 @@ import slugify from "slugify";
 import { TtlCache } from "../common/ttl-cache";
 import { PrismaService } from "../prisma/prisma.service";
 import {
-  assertBothLocales,
+  assertAzLocale,
   contentToPrismaJson,
   translationsToContent,
 } from "./article-content";
@@ -227,11 +227,11 @@ export class ArticlesService {
   }
 
   async create(dto: CreateArticleDto, userId: string) {
-    assertBothLocales(dto.translations);
+    assertAzLocale(dto.translations);
+    const azTitle =
+      dto.translations.find((t) => t.locale === "az")?.title ?? "";
     const baseSlug =
-      this.buildSlug(
-        dto.slug?.trim() || dto.translations[0]?.title || "article",
-      ) || "article";
+      this.buildSlug(dto.slug?.trim() || azTitle || "article") || "article";
 
     for (let attempt = 0; attempt < 15; attempt++) {
       const slug = attempt === 0 ? baseSlug : `${baseSlug}-${attempt + 1}`;
@@ -260,7 +260,7 @@ export class ArticlesService {
     userId: string,
   ) {
     const status = dto.status ?? ArticleStatus.draft;
-    const publishedAt = this.resolvePublishedAt(status, dto.publishedAt);
+    const publishedAt = this.resolvePublishedAt(status);
     const content = translationsToContent(dto.translations);
 
     const article = await this.prisma.article.create({
@@ -294,16 +294,11 @@ export class ArticlesService {
         : undefined;
 
     const status = dto.status ?? existing.status;
-    const publishedAt =
-      dto.publishedAt !== undefined
-        ? this.resolvePublishedAt(status, dto.publishedAt)
-        : status === ArticleStatus.published && !existing.publishedAt
-          ? new Date()
-          : existing.publishedAt;
+    const publishedAt = this.resolvePublishedAt(status);
 
     let contentUpdate: Prisma.InputJsonValue | undefined;
     if (dto.translations?.length) {
-      assertBothLocales(dto.translations);
+      assertAzLocale(dto.translations);
       contentUpdate = contentToPrismaJson(translationsToContent(dto.translations));
     }
 
@@ -350,14 +345,12 @@ export class ArticlesService {
     return { deleted: true };
   }
 
-  private resolvePublishedAt(
-    status: ArticleStatus,
-    publishedAt?: string,
-  ): Date | null {
+  /** Dərc tarixi həmişə serverdə cari vaxt ilə təyin olunur. */
+  private resolvePublishedAt(status: ArticleStatus): Date | null {
     if (status !== ArticleStatus.published) {
-      return publishedAt ? new Date(publishedAt) : null;
+      return null;
     }
-    return publishedAt ? new Date(publishedAt) : new Date();
+    return new Date();
   }
 
   private buildSlug(source: string): string {

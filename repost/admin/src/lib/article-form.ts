@@ -41,7 +41,6 @@ export function articleToForm(article: AdminArticle): ArticleFormPayload {
     isFeatured: article.isFeatured,
     featuredOrder: article.featuredOrder ?? undefined,
     coverImageUrl: article.coverImageUrl ?? undefined,
-    publishedAt: article.publishedAt ?? undefined,
     translations: LOCALES.map(
       (locale) => byLocale.get(locale) ?? emptyTranslation(locale),
     ),
@@ -90,31 +89,52 @@ export function updateTranslation(
   };
 }
 
+function ruHasAnyInput(bodyDraft: Record<Locale, string>, t: ArticleTranslation): boolean {
+  return (
+    t.title.trim().length > 0 ||
+    t.summary.trim().length > 0 ||
+    textToBody(bodyDraft.ru).length > 0
+  );
+}
+
+/** Yalnız AZ mütləq; RU istəyə görə. */
 export function validateArticleForm(
   form: ArticleFormPayload,
   bodyDraft: Record<Locale, string>,
 ): string | null {
-  for (const locale of LOCALES) {
-    const t = getTranslation(form, locale);
-    const title = t.title.trim();
-    const summary = t.summary.trim();
-    const body = textToBody(bodyDraft[locale]);
-    const label = LOCALE_LABEL[locale];
+  const az = getTranslation(form, "az");
+  const azTitle = az.title.trim();
+  const azSummary = az.summary.trim();
+  const azBody = textToBody(bodyDraft.az);
 
-    if (title.length < 3) {
-      return `${label}: başlıq ən azı 3 simvol olmalıdır`;
-    }
-    if (summary.length < 10) {
-      return `${label}: xülasə ən azı 10 simvol olmalıdır`;
-    }
-    if (body.length < 1) {
-      return `${label}: mətn boş ola bilməz`;
-    }
+  if (azTitle.length < 3) {
+    return "Azərbaycan: başlıq ən azı 3 simvol olmalıdır";
   }
+  if (azSummary.length < 10) {
+    return "Azərbaycan: xülasə ən azı 10 simvol olmalıdır";
+  }
+  if (azBody.length < 1) {
+    return "Azərbaycan: mətn boş ola bilməz";
+  }
+
+  const ru = getTranslation(form, "ru");
+  if (!ruHasAnyInput(bodyDraft, ru)) {
+    return null;
+  }
+
+  if (ru.title.trim().length < 3) {
+    return "Rus: başlıq doldurulubsa, ən azı 3 simvol olmalıdır";
+  }
+  if (ru.summary.trim().length < 10) {
+    return "Rus: xülasə doldurulubsa, ən azı 10 simvol olmalıdır";
+  }
+  if (textToBody(bodyDraft.ru).length < 1) {
+    return "Rus: mətn doldurulubsa, boş ola bilməz";
+  }
+
   return null;
 }
 
-/** API-yə göndərməzdən əvvəl — hər iki dil mütləq */
 export function normalizeArticlePayload(
   form: ArticleFormPayload,
 ): ArticleFormPayload {
@@ -128,7 +148,6 @@ export function normalizeArticlePayload(
     ...(slug ? { slug } : {}),
     ...(coverImageUrl ? { coverImageUrl } : {}),
     ...(form.featuredOrder != null ? { featuredOrder: form.featuredOrder } : {}),
-    ...(form.publishedAt ? { publishedAt: form.publishedAt } : {}),
     translations: LOCALES.map((locale) => {
       const t = getTranslation(form, locale);
       const title = t.title.trim();

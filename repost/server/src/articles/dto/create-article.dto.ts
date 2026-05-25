@@ -5,12 +5,10 @@ import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
-  IsDateString,
   IsEnum,
   IsInt,
   IsOptional,
   IsString,
-  IsUrl,
   MinLength,
   ValidateNested,
 } from "class-validator";
@@ -50,17 +48,12 @@ export class CreateArticleDto {
   @Transform(({ value }) =>
     typeof value === "string" && value.trim() === "" ? undefined : value,
   )
-  @IsUrl()
+  @IsString()
   coverImageUrl?: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsDateString()
-  publishedAt?: string;
-
-  @ApiProperty({ type: [ArticleTranslationDto], minItems: 2, maxItems: 2 })
+  @ApiProperty({ type: [ArticleTranslationDto], minItems: 1, maxItems: 2 })
   @IsArray()
-  @ArrayMinSize(2)
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => ArticleTranslationDto)
   translations!: ArticleTranslationDto[];

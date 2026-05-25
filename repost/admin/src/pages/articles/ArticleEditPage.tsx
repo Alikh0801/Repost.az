@@ -74,6 +74,7 @@ export function ArticleEditPage() {
   }, [id, isNew]);
 
   const translation = getTranslation(form, activeLocale);
+  const localeRequired = activeLocale === "az";
 
   async function handleImageUpload(file: File | null) {
     if (!file) return;
@@ -149,7 +150,8 @@ export function ArticleEditPage() {
             {isNew ? "Yeni xəbər" : "Xəbəri redaktə et"}
           </h1>
           <p className="admin-muted">
-            Azərbaycan və Rus dillərində bütün sahələr mütləqdir.
+            Azərbaycan dili mütləqdir. Rus dili istəyə görədir. Dərc vaxtı avtomatik
+            təyin olunur.
           </p>
         </div>
       </header>
@@ -210,26 +212,6 @@ export function ArticleEditPage() {
               />
             </label>
 
-            <label className="field">
-              <span>Dərc tarixi</span>
-              <input
-                type="datetime-local"
-                value={
-                  form.publishedAt
-                    ? form.publishedAt.slice(0, 16)
-                    : ""
-                }
-                onChange={(e) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    publishedAt: e.target.value
-                      ? new Date(e.target.value).toISOString()
-                      : undefined,
-                  }))
-                }
-              />
-            </label>
-
             <label className="field field--checkbox">
               <input
                 type="checkbox"
@@ -260,19 +242,7 @@ export function ArticleEditPage() {
           </div>
 
           <label className="field">
-            <span>Üz şəkli URL</span>
-            <input
-              type="url"
-              value={form.coverImageUrl ?? ""}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, coverImageUrl: e.target.value }))
-              }
-              placeholder="https://..."
-            />
-          </label>
-
-          <label className="field">
-            <span>Şəkil yüklə</span>
+            <span>Üz şəkli (fayl yüklə)</span>
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
@@ -307,7 +277,10 @@ export function ArticleEditPage() {
 
           <div className="article-form__grid article-form__grid--single">
             <label className="field">
-              <span>Başlıq ({LOCALE_LABEL[activeLocale]})</span>
+              <span>
+                Başlıq ({LOCALE_LABEL[activeLocale]}
+                {localeRequired ? " *" : ", istəyə görə"})
+              </span>
               <input
                 type="text"
                 value={translation.title}
@@ -316,15 +289,18 @@ export function ArticleEditPage() {
                     updateTranslation(prev, activeLocale, { title: e.target.value }),
                   )
                 }
-                required
+                required={localeRequired}
               />
             </label>
 
             <label className="field">
-              <span>Lead / xülasə (min. 10 simvol)</span>
+              <span>
+                Lead / xülasə
+                {localeRequired ? " (min. 10 simvol) *" : " (istəyə görə)"}
+              </span>
               <textarea
                 rows={3}
-                minLength={10}
+                minLength={localeRequired ? 10 : undefined}
                 value={translation.summary}
                 onChange={(e) =>
                   setForm((prev) =>
@@ -333,12 +309,15 @@ export function ArticleEditPage() {
                     }),
                   )
                 }
-                required
+                required={localeRequired}
               />
             </label>
 
             <label className="field">
-              <span>Mətn (Enter — yeni sətir / abzas) *</span>
+              <span>
+                Mətn (Enter — yeni sətir / abzas)
+                {localeRequired ? " *" : ", istəyə görə"}
+              </span>
               <textarea
                 rows={12}
                 value={bodyDraft[activeLocale]}
@@ -351,7 +330,7 @@ export function ArticleEditPage() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") e.stopPropagation();
                 }}
-                required
+                required={localeRequired}
               />
             </label>
           </div>

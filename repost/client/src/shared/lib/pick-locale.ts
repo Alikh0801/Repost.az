@@ -16,7 +16,11 @@ function pick<T extends ArticleLocales | ArticleDetailLocales>(
   locales: T,
   locale: AppLocale,
 ): T[AppLocale] {
-  return locales[locale];
+  const slice = locales[locale];
+  if (slice?.title?.trim()) {
+    return slice;
+  }
+  return locales.az;
 }
 
 export function pickListItem(
