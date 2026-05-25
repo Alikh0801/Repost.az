@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { randomUUID } from "crypto";
 import { mkdir, writeFile } from "fs/promises";
 import { extname, join } from "path";
+import { buildMediaFilePath } from "../common/media-url";
 import { detectImageFromBuffer, mimeFromExtension } from "./detect-image";
 
 const MIME_TO_EXT: Record<string, string> = {
@@ -63,12 +64,8 @@ export class MediaService {
     const filename = `${randomUUID()}${extension}`;
     await writeFile(join(uploadsDir, filename), file.buffer);
 
-    const publicBase = this.config
-      .get<string>("PUBLIC_BASE_URL", "http://localhost:3000")
-      .replace(/\/$/, "");
-
     return {
-      url: `${publicBase}/uploads/${filename}`,
+      url: buildMediaFilePath(filename),
       filename,
       mime,
     };

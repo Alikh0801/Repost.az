@@ -1,4 +1,5 @@
 import type { AppLocale } from "../../i18n/types";
+import { resolveMediaUrl } from "./resolve-media-url";
 import type { NewsArticle } from "../types/article";
 import type { CategoryNewsItem } from "../types/category-news-item";
 import type { FeaturedNewsItem } from "../types/featured-news-item";
@@ -34,7 +35,7 @@ export function pickListItem(
     category: dto.category,
     title: text.title,
     summary: text.summary,
-    imageUrl: dto.imageUrl || PLACEHOLDER_IMAGE,
+    imageUrl: resolveMediaUrl(dto.imageUrl) || PLACEHOLDER_IMAGE,
     imageAlt: text.imageAlt,
     publishedAt: dto.publishedAt,
     viewCount: dto.viewCount,
@@ -52,7 +53,7 @@ export function pickFeaturedItem(
     category: dto.category,
     title: text.title,
     summary: text.summary,
-    imageUrl: dto.imageUrl || PLACEHOLDER_IMAGE,
+    imageUrl: resolveMediaUrl(dto.imageUrl) || PLACEHOLDER_IMAGE,
     imageAlt: text.imageAlt,
     publishedAt: dto.publishedAt,
   };
@@ -70,7 +71,7 @@ export function pickArticleDetail(
     title: text.title,
     summary: text.summary,
     body: text.body,
-    imageUrl: dto.imageUrl || PLACEHOLDER_IMAGE,
+    imageUrl: resolveMediaUrl(dto.imageUrl) || PLACEHOLDER_IMAGE,
     imageAlt: text.imageAlt,
     publishedAt: dto.publishedAt,
     viewCount: dto.viewCount,

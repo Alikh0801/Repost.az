@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 import { ArticleStatus, Category, Prisma } from "@prisma/client";
 import slugify from "slugify";
+import { normalizeStoredMediaUrl } from "../common/media-url";
 import { TtlCache } from "../common/ttl-cache";
 import { PrismaService } from "../prisma/prisma.service";
 import {
@@ -270,7 +271,7 @@ export class ArticlesService {
         status,
         isFeatured: dto.isFeatured ?? false,
         featuredOrder: dto.featuredOrder,
-        coverImageUrl: dto.coverImageUrl,
+        coverImageUrl: normalizeStoredMediaUrl(dto.coverImageUrl),
         publishedAt,
         createdById: userId,
         content: contentToPrismaJson(content),
@@ -317,7 +318,9 @@ export class ArticlesService {
               ? { featuredOrder: dto.featuredOrder }
               : {}),
             ...(dto.coverImageUrl !== undefined
-              ? { coverImageUrl: dto.coverImageUrl }
+              ? {
+                  coverImageUrl: normalizeStoredMediaUrl(dto.coverImageUrl),
+                }
               : {}),
             ...(contentUpdate !== undefined ? { content: contentUpdate } : {}),
             publishedAt,

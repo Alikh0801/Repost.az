@@ -1,4 +1,5 @@
 import { Article } from "@prisma/client";
+import { normalizeStoredMediaUrl } from "../common/media-url";
 import type { AppLocale } from "../common/locale";
 import {
   type ArticleContent,
@@ -7,6 +8,10 @@ import {
 } from "./article-content";
 
 type ArticleRow = Article;
+
+function publicImageUrl(coverImageUrl: string | null): string {
+  return normalizeStoredMediaUrl(coverImageUrl) ?? "";
+}
 
 function localeSlice(content: ArticleContent, locale: AppLocale) {
   return content[locale];
@@ -19,7 +24,7 @@ export function toArticleListItem(article: ArticleRow) {
     id: article.id,
     slug: article.slug,
     category: article.category,
-    imageUrl: article.coverImageUrl ?? "",
+    imageUrl: publicImageUrl(article.coverImageUrl),
     publishedAt:
       article.publishedAt?.toISOString() ?? article.createdAt.toISOString(),
     viewCount: article.viewCount,
@@ -46,7 +51,7 @@ export function toArticleDetail(article: ArticleRow) {
     id: article.id,
     slug: article.slug,
     category: article.category,
-    imageUrl: article.coverImageUrl ?? "",
+    imageUrl: publicImageUrl(article.coverImageUrl),
     publishedAt:
       article.publishedAt?.toISOString() ?? article.createdAt.toISOString(),
     viewCount: article.viewCount,
@@ -68,7 +73,7 @@ export function toAdminArticle(article: ArticleRow) {
     status: article.status,
     isFeatured: article.isFeatured,
     featuredOrder: article.featuredOrder,
-    coverImageUrl: article.coverImageUrl,
+    coverImageUrl: publicImageUrl(article.coverImageUrl) || null,
     publishedAt: article.publishedAt?.toISOString() ?? null,
     viewCount: article.viewCount,
     createdAt: article.createdAt.toISOString(),

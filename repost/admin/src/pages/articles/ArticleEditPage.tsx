@@ -22,6 +22,7 @@ import {
   validateArticleForm,
 } from "../../lib/article-form";
 import { formatApiError } from "../../lib/format-api-error";
+import { resolveMediaUrl } from "../../lib/resolve-media-url";
 import type { ArticleFormPayload, ArticleStatus, Locale } from "../../types/article";
 import "./articles.css";
 
@@ -255,7 +256,7 @@ export function ArticleEditPage() {
           {form.coverImageUrl ? (
             <img
               className="article-form__preview"
-              src={form.coverImageUrl}
+              src={resolveMediaUrl(form.coverImageUrl)}
               alt="Önizləmə"
             />
           ) : null}
