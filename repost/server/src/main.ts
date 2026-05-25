@@ -49,6 +49,11 @@ async function bootstrap() {
 
   app.useStaticAssets(join(process.cwd(), "uploads"), {
     prefix: "/uploads/",
+    setHeaders(res, filePath) {
+      if (filePath.endsWith(".webp")) {
+        res.setHeader("Content-Type", "image/webp");
+      }
+    },
   });
 
   const swaggerConfig = new DocumentBuilder()

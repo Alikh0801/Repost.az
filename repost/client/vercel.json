@@ -5,6 +5,10 @@
       "destination": "https://repost-api-cv3y.onrender.com/api/:path*"
     },
     {
+      "source": "/uploads/:path*",
+      "destination": "https://repost-api-cv3y.onrender.com/uploads/:path*"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "https://repost-api-cv3y.onrender.com/sitemap.xml"
     },
