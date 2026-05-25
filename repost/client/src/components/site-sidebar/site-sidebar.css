@@ -26,6 +26,23 @@
   margin-bottom: 1.75rem;
 }
 
+.site-sidebar__brand-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.site-sidebar__brand-link:hover {
+  opacity: 0.88;
+}
+
+.site-sidebar__brand-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 .site-sidebar__brand-title {
   line-height: 1.1;
 }

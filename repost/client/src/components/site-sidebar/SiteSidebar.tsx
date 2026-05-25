@@ -1,4 +1,7 @@
+import { Link } from "react-router-dom";
+import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
+import { HOME_VIEW_ID } from "../../shared/types/catalog";
 import { useTheme } from "../../theme";
 import "./site-sidebar.css";
 
@@ -105,20 +108,34 @@ function FlagRuIcon({ className }: { className?: string }) {
 export function SiteSidebar() {
   const { locale, setLocale, t } = useI18n();
   const { theme, toggleTheme } = useTheme();
+  const { setActiveView } = useCatalog();
   const isDark = theme === "dark";
+
+  const goHome = () => {
+    setActiveView(HOME_VIEW_ID);
+  };
 
   return (
     <aside className="site-sidebar" aria-label={t("sidebar.ariaNav")}>
       <header className="site-sidebar__brand">
-        <div className="site-sidebar__brand-title">
-          <span className="site-sidebar__logo-full">
-            <span className="site-sidebar__logo">RePost</span>
-            <span className="site-sidebar__logo-dot">.az</span>
+        <Link
+          to="/"
+          className="site-sidebar__brand-link"
+          aria-label={t("nav.home")}
+          onClick={() => {
+            goHome();
+          }}
+        >
+          <span className="site-sidebar__brand-title">
+            <span className="site-sidebar__logo-full">
+              <span className="site-sidebar__logo">RePost</span>
+              <span className="site-sidebar__logo-dot">.Az</span>
+            </span>
+            <span className="site-sidebar__logo-short" aria-hidden>
+              R
+            </span>
           </span>
-          <span className="site-sidebar__logo-short" aria-hidden>
-            R
-          </span>
-        </div>
+        </Link>
         <p className="site-sidebar__tagline">{t("sidebar.brandTagline")}</p>
         <div className="site-sidebar__brand-theme">
           <button

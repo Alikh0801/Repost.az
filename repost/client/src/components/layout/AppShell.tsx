@@ -5,13 +5,13 @@ import "./app-shell.css";
 
 export function AppShell() {
   return (
-    <div className="app-shell">
-      <SiteSidebar />
-      <CatalogProvider>
+    <CatalogProvider>
+      <div className="app-shell">
+        <SiteSidebar />
         <div className="app-shell__content">
           <Outlet />
         </div>
-      </CatalogProvider>
-    </div>
+      </div>
+    </CatalogProvider>
   );
 }
