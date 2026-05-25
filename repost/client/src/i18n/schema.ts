@@ -43,6 +43,7 @@ export type AppMessages = {
   };
   nav: {
     ariaLabel: string;
+    home: string;
     politics: string;
     economy: string;
     society: string;
@@ -60,5 +61,6 @@ export type AppMessages = {
     loading: string;
     error: string;
     emptyCategory: string;
+    emptyHome: string;
   };
 };

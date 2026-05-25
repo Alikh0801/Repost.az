@@ -6,24 +6,23 @@ import {
   type ReactNode,
 } from "react";
 import {
-  DEFAULT_CATALOG_ID,
-  type CatalogId,
+  DEFAULT_NAV_VIEW,
+  type NavViewId,
 } from "../../shared/types/catalog";
 
 type CatalogContextValue = {
-  activeCatalog: CatalogId;
-  setActiveCatalog: (id: CatalogId) => void;
+  activeView: NavViewId;
+  setActiveView: (id: NavViewId) => void;
 };
 
 const CatalogContext = createContext<CatalogContextValue | null>(null);
 
 export function CatalogProvider({ children }: { children: ReactNode }) {
-  const [activeCatalog, setActiveCatalog] =
-    useState<CatalogId>(DEFAULT_CATALOG_ID);
+  const [activeView, setActiveView] = useState<NavViewId>(DEFAULT_NAV_VIEW);
 
   const value = useMemo(
-    () => ({ activeCatalog, setActiveCatalog }),
-    [activeCatalog],
+    () => ({ activeView, setActiveView }),
+    [activeView],
   );
 
   return (

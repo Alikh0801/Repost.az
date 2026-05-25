@@ -1,0 +1,51 @@
+import { useEffect, useMemo, useState } from "react";
+import { useI18n } from "../../i18n";
+import { fetchRecentNews } from "../api/articles";
+import { pickFeaturedItem } from "../lib/pick-locale";
+import type { BilingualListItemDto } from "../types/bilingual";
+import { HOME_VIEW_ID, type CatalogId, type NavViewId } from "../types/catalog";
+import type { FeaturedNewsItem } from "../types/featured-news-item";
+
+const HERO_SLIDE_LIMIT = 10;
+
+/** Üst hissə: ən son dərc olunmuş xəbərlər (ana səhifədə bütün rubrikalar). */
+export function useHeroNews(view: NavViewId) {
+  const { locale } = useI18n();
+  const [raw, setRaw] = useState<BilingualListItemDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    const category =
+      view === HOME_VIEW_ID ? undefined : (view as CatalogId);
+
+    fetchRecentNews(HERO_SLIDE_LIMIT, category)
+      .then((page) => {
+        if (!cancelled) setRaw(page.items);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setRaw([]);
+          setError(err instanceof Error ? err.message : "Xəta");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [view]);
+
+  const items = useMemo<FeaturedNewsItem[]>(
+    () => raw.map((item) => pickFeaturedItem(item, locale)),
+    [raw, locale],
+  );
+
+  return { items, loading, error };
+}

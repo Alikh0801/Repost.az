@@ -44,6 +44,7 @@ export const ru: AppMessages = {
   },
   nav: {
     ariaLabel: "Рубрики",
+    home: "Главная",
     politics: "Политика",
     economy: "Экономика",
     society: "Общество",
@@ -55,6 +56,7 @@ export const ru: AppMessages = {
     loading: "Загрузка...",
     error: "Произошла ошибка. Попробуйте позже.",
     emptyCategory: "В этой рубрике пока нет новостей.",
+    emptyHome: "Пока нет новостей.",
   },
   seo: {
     homeTitle: "Repost.az — Самый читаемый новостной портал Азербайджана",

@@ -44,6 +44,7 @@ export const az: AppMessages = {
   },
   nav: {
     ariaLabel: "Kateqoriyalar",
+    home: "Ana səhifə",
     politics: "Siyasət",
     economy: "İqtisadiyyat",
     society: "Sosial",
@@ -55,6 +56,7 @@ export const az: AppMessages = {
     loading: "Yüklənir...",
     error: "Xəta baş verdi. Bir az sonra yenidən cəhd edin.",
     emptyCategory: "Bu rubrikada xəbər yoxdur.",
+    emptyHome: "Hələ xəbər yoxdur.",
   },
   seo: {
     homeTitle: "Repost.az — Azərbaycanın ən çox oxunan xəbər portalı",

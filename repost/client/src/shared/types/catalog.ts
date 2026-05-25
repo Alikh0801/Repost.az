@@ -8,6 +8,11 @@ export type CatalogId =
   | "incidents"
   | "world";
 
+/** Navbar: ana səhifə və ya rubrika */
+export type NavViewId = CatalogId | "home";
+
+export const HOME_VIEW_ID = "home" as const;
+
 export const CATALOG: readonly { id: CatalogId; labelKey: AppMessagePath }[] = [
   { id: "politics", labelKey: "nav.politics" },
   { id: "economy", labelKey: "nav.economy" },
@@ -17,4 +22,4 @@ export const CATALOG: readonly { id: CatalogId; labelKey: AppMessagePath }[] = [
   { id: "world", labelKey: "nav.world" },
 ] as const;
 
-export const DEFAULT_CATALOG_ID: CatalogId = "politics";
+export const DEFAULT_NAV_VIEW: NavViewId = HOME_VIEW_ID;

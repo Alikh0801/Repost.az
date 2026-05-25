@@ -2,7 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
-import { CATALOG, type CatalogId } from "../../shared/types/catalog";
+import {
+  CATALOG,
+  HOME_VIEW_ID,
+  type CatalogId,
+  type NavViewId,
+} from "../../shared/types/catalog";
 import { formatNavbarDate } from "../../shared/lib/format-navbar-date";
 import { PageContainer } from "../page-container/PageContainer";
 import "./site-navbar.css";
@@ -11,13 +16,13 @@ const NAVBAR_DATE_TICK_MS = 60_000;
 
 export function SiteNavbar() {
   const { locale, t } = useI18n();
-  const { activeCatalog, setActiveCatalog } = useCatalog();
+  const { activeView, setActiveView } = useCatalog();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [now, setNow] = useState(() => new Date());
 
-  const selectCatalog = (id: CatalogId) => {
-    setActiveCatalog(id);
+  const selectView = (id: NavViewId) => {
+    setActiveView(id);
     if (pathname !== "/") {
       navigate("/");
     }
@@ -47,14 +52,25 @@ export function SiteNavbar() {
         </time>
         <nav className="site-navbar__nav" aria-label={t("nav.ariaLabel")}>
           <ul className="site-nav__list">
+            <li className="site-nav__item">
+              <button
+                type="button"
+                className="site-nav__tab"
+                data-active={activeView === HOME_VIEW_ID}
+                aria-pressed={activeView === HOME_VIEW_ID}
+                onClick={() => selectView(HOME_VIEW_ID)}
+              >
+                {t("nav.home")}
+              </button>
+            </li>
             {CATALOG.map(({ id, labelKey }) => (
               <li key={id} className="site-nav__item">
                 <button
                   type="button"
                   className="site-nav__tab"
-                  data-active={activeCatalog === id}
-                  aria-pressed={activeCatalog === id}
-                  onClick={() => selectCatalog(id)}
+                  data-active={activeView === id}
+                  aria-pressed={activeView === id}
+                  onClick={() => selectView(id as CatalogId)}
                 >
                   {t(labelKey)}
                 </button>

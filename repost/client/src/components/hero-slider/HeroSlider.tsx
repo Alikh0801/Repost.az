@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
 import type { AppMessagePath } from "../../i18n/paths";
-import { useFeaturedNews } from "../../shared/hooks/use-featured-news";
+import { useHeroNews } from "../../shared/hooks/use-hero-news";
 import { articlePath } from "../../shared/lib/article-path";
 import type { CatalogId } from "../../shared/types/catalog";
 import { formatArticleDate } from "../../shared/lib/format-article-date";
@@ -43,7 +44,8 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
 
 export function HeroSlider() {
   const { locale, t } = useI18n();
-  const { items: slides, loading } = useFeaturedNews();
+  const { activeView } = useCatalog();
+  const { items: slides, loading } = useHeroNews(activeView);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(0);
@@ -67,7 +69,7 @@ export function HeroSlider() {
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [locale, slides]);
+  }, [locale, slides, activeView]);
 
   useEffect(() => {
     if (slideCount <= 1 || isPaused) return;

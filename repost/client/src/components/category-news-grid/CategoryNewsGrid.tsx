@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
-import { useCategoryNews } from "../../shared/hooks/use-category-news";
-import { CATALOG } from "../../shared/types/catalog";
+import { useNewsFeed } from "../../shared/hooks/use-news-feed";
+import { CATALOG, HOME_VIEW_ID } from "../../shared/types/catalog";
 import { NewsCard } from "../news-card/NewsCard";
 import "./category-news-grid.css";
 
@@ -10,9 +10,10 @@ const CLOCK_TICK_MS = 60_000;
 
 export function CategoryNewsGrid() {
   const { t } = useI18n();
-  const { activeCatalog } = useCatalog();
+  const { activeView } = useCatalog();
   const [now, setNow] = useState(() => new Date());
-  const { articles, loading, error } = useCategoryNews(activeCatalog);
+  const { articles, loading, error } = useNewsFeed(activeView);
+  const isHome = activeView === HOME_VIEW_ID;
 
   useEffect(() => {
     const tick = () => setNow(new Date());
@@ -28,9 +29,10 @@ export function CategoryNewsGrid() {
   }, []);
 
   const sectionLabel = useMemo(() => {
-    const entry = CATALOG.find((item) => item.id === activeCatalog);
+    if (isHome) return t("nav.home");
+    const entry = CATALOG.find((item) => item.id === activeView);
     return entry ? t(entry.labelKey) : "";
-  }, [activeCatalog, t]);
+  }, [activeView, isHome, t]);
 
   return (
     <section
@@ -52,7 +54,9 @@ export function CategoryNewsGrid() {
       ) : null}
 
       {!loading && !error && articles.length === 0 ? (
-        <p className="category-news-grid__status">{t("common.emptyCategory")}</p>
+        <p className="category-news-grid__status">
+          {isHome ? t("common.emptyHome") : t("common.emptyCategory")}
+        </p>
       ) : null}
 
       {!loading && articles.length > 0 ? (
