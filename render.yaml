@@ -32,7 +32,7 @@ services:
       - key: VIEW_BOOST_WINDOW_HOURS
         value: "6"
       - key: VIEW_BOOST_MIN
-        value: "30"
+        value: "20"
       - key: VIEW_BOOST_MAX
         value: "40"
       - key: VIEW_BOOST_INTERVAL_MS
