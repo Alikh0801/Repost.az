@@ -38,7 +38,7 @@
   margin: 0;
   max-width: min(12rem, 90%);
   font-family: var(--font-sans);
-  font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
+  font-size: clamp(0.73rem, 0.68rem + 0.2vw, 0.82rem);
   line-height: 1.45;
   opacity: 0.5;
 }
