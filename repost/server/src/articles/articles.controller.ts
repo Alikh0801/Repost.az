@@ -10,6 +10,7 @@ import { ApiTags } from "@nestjs/swagger";
 import type { Request } from "express";
 import { HttpCache, NoStore } from "../common/http-cache.decorator";
 import { ArticlesService } from "./articles.service";
+import { FeaturedArticlesQuery } from "./dto/featured-articles.query";
 import { ListArticlesQuery } from "./dto/list-articles.query";
 
 @ApiTags("articles")
@@ -29,8 +30,8 @@ export class ArticlesController {
 
   @Get("featured")
   @HttpCache(30, 60)
-  featured() {
-    return this.articlesService.listFeatured();
+  featured(@Query() query: FeaturedArticlesQuery) {
+    return this.articlesService.listFeatured(query.category);
   }
 
   @Get(":slug/related")

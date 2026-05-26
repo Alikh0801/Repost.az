@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "../../i18n";
-import { fetchRecentNews } from "../api/articles";
+import { fetchFeaturedNewsByCategory } from "../api/articles";
 import { pickFeaturedItem } from "../lib/pick-locale";
 import type { BilingualListItemDto } from "../types/bilingual";
 import { HOME_VIEW_ID, type CatalogId, type NavViewId } from "../types/catalog";
 import type { FeaturedNewsItem } from "../types/featured-news-item";
 
-const HERO_SLIDE_LIMIT = 10;
-
-/** Üst hissə: ən son dərc olunmuş xəbərlər (ana səhifədə bütün rubrikalar). */
+/** Üst hissə: yalnız admin-də seçilmiş “Hero” xəbərləri. */
 export function useHeroNews(view: NavViewId) {
   const { locale } = useI18n();
   const [raw, setRaw] = useState<BilingualListItemDto[]>([]);
@@ -23,9 +21,9 @@ export function useHeroNews(view: NavViewId) {
     const category =
       view === HOME_VIEW_ID ? undefined : (view as CatalogId);
 
-    fetchRecentNews(HERO_SLIDE_LIMIT, category)
-      .then((page) => {
-        if (!cancelled) setRaw(page.items);
+    fetchFeaturedNewsByCategory(category)
+      .then((items) => {
+        if (!cancelled) setRaw(items);
       })
       .catch((err) => {
         if (!cancelled) {

@@ -14,6 +14,12 @@ export function fetchFeaturedNews() {
   return apiGet<BilingualListItemDto[]>("/articles/featured");
 }
 
+export function fetchFeaturedNewsByCategory(category?: CatalogId) {
+  if (!category) return fetchFeaturedNews();
+  const params = new URLSearchParams({ category });
+  return apiGet<BilingualListItemDto[]>(`/articles/featured?${params}`);
+}
+
 export function fetchRecentNews(limit = 50, category?: CatalogId) {
   const params = new URLSearchParams({ limit: String(limit) });
   if (category) params.set("category", category);

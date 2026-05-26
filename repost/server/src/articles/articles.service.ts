@@ -76,20 +76,22 @@ export class ArticlesService {
     };
   }
 
-  async listFeatured() {
-    const cached = this.featuredCache.get("featured");
+  async listFeatured(category?: Category) {
+    const cacheKey = `featured:${category ?? "all"}`;
+    const cached = this.featuredCache.get(cacheKey);
     if (cached) return cached;
 
-    const items = await this.listFeaturedUncached();
-    this.featuredCache.set("featured", items);
+    const items = await this.listFeaturedUncached(category);
+    this.featuredCache.set(cacheKey, items);
     return items;
   }
 
-  private async listFeaturedUncached() {
+  private async listFeaturedUncached(category?: Category) {
     const articles = await this.prisma.article.findMany({
       where: {
         status: ArticleStatus.published,
         isFeatured: true,
+        ...(category ? { category } : {}),
       },
       orderBy: [{ featuredOrder: "asc" }, { publishedAt: "desc" }],
       take: 10,
