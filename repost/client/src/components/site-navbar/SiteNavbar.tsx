@@ -6,7 +6,6 @@ import {
   CATALOG,
   HOME_VIEW_ID,
   type CatalogId,
-  type NavViewId,
 } from "../../shared/types/catalog";
 import { formatNavbarDate } from "../../shared/lib/format-navbar-date";
 import { PageContainer } from "../page-container/PageContainer";
@@ -21,8 +20,10 @@ export function SiteNavbar() {
   const { pathname } = useLocation();
   const [now, setNow] = useState(() => new Date());
 
-  const selectView = (id: NavViewId) => {
-    setActiveView(id);
+  const selectCategory = (id: CatalogId) => {
+    // Home link göstərilmir; eyni rubrika yenidən kliklənsə home rejiminə qayıtsın.
+    const next = activeView === id ? HOME_VIEW_ID : id;
+    setActiveView(next);
     if (pathname !== "/") {
       navigate("/");
     }
@@ -52,17 +53,6 @@ export function SiteNavbar() {
         </time>
         <nav className="site-navbar__nav" aria-label={t("nav.ariaLabel")}>
           <ul className="site-nav__list">
-            <li className="site-nav__item">
-              <button
-                type="button"
-                className="site-nav__tab"
-                data-active={activeView === HOME_VIEW_ID}
-                aria-pressed={activeView === HOME_VIEW_ID}
-                onClick={() => selectView(HOME_VIEW_ID)}
-              >
-                {t("nav.home")}
-              </button>
-            </li>
             {CATALOG.map(({ id, labelKey }) => (
               <li key={id} className="site-nav__item">
                 <button
@@ -70,7 +60,7 @@ export function SiteNavbar() {
                   className="site-nav__tab"
                   data-active={activeView === id}
                   aria-pressed={activeView === id}
-                  onClick={() => selectView(id as CatalogId)}
+                  onClick={() => selectCategory(id)}
                 >
                   {t(labelKey)}
                 </button>
