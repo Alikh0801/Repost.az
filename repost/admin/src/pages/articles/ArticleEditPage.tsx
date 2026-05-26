@@ -150,10 +150,6 @@ export function ArticleEditPage() {
           <h1 className="admin-page__title">
             {isNew ? "Yeni xəbər" : "Xəbəri redaktə et"}
           </h1>
-          <p className="admin-muted">
-            Azərbaycan dili mütləqdir. Rus dili istəyə görədir. Dərc vaxtı avtomatik
-            təyin olunur.
-          </p>
         </div>
       </header>
 
@@ -221,11 +217,11 @@ export function ArticleEditPage() {
                   setForm((prev) => ({ ...prev, isFeatured: e.target.checked }))
                 }
               />
-              <span>Hero (əsas slayder)</span>
+              <span>Manset (əsas slayder)</span>
             </label>
 
             <label className="field">
-              <span>Hero sırası</span>
+              <span>Manşet sırası</span>
               <input
                 type="number"
                 min={1}
@@ -338,8 +334,11 @@ export function ArticleEditPage() {
         </section>
 
         <div className="article-form__actions">
+          <button type="submit" className="btn btn--primary" disabled={saving}>
+            {saving ? "Saxlanılır..." : "Yadda saxla"}
+          </button>
           {!isNew && (form.status ?? "draft") === "published" ? (
-            <label className="field field--checkbox" style={{ margin: 0 }}>
+            <label className="field field--checkbox" style={{ margin: 0, paddingTop: 0 }}>
               <input
                 type="checkbox"
                 checked={Boolean(form.publishNow)}
@@ -350,9 +349,6 @@ export function ArticleEditPage() {
               <span>Cari vaxtdan dərc et</span>
             </label>
           ) : null}
-          <button type="submit" className="btn btn--primary" disabled={saving}>
-            {saving ? "Saxlanılır..." : "Yadda saxla"}
-          </button>
           <Link to="/articles" className="btn btn--ghost">
             Ləğv et
           </Link>

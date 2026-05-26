@@ -78,7 +78,7 @@ export function ArticlesListPage() {
                 <th>Başlıq (AZ)</th>
                 <th>Kateqoriya</th>
                 <th>Status</th>
-                <th>Hero</th>
+                <th>Manşet</th>
                 <th>Oxunuş</th>
                 <th aria-label="Əməliyyatlar" />
               </tr>

@@ -3,34 +3,41 @@
   display: grid;
   place-items: center;
   padding: 1.5rem;
-  background: linear-gradient(145deg, #1a1d21 0%, #2a3038 100%);
+  background:
+    radial-gradient(1200px 600px at 18% 0%, rgba(180, 35, 42, 0.10), transparent 60%),
+    radial-gradient(900px 520px at 88% 10%, rgba(99, 102, 241, 0.10), transparent 55%),
+    var(--bg);
 }
 
 .login-card {
   width: min(100%, 22rem);
-  padding: 2rem;
-  border-radius: 0.5rem;
-  background: #fff;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  padding: 2rem 2rem 1.75rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
 }
 
 .login-card__title {
   margin: 0 0 0.35rem;
   font-size: 1.35rem;
+  letter-spacing: -0.01em;
 }
 
 .login-card__hint {
   margin: 0 0 1.25rem;
   font-size: 0.88rem;
-  color: #5c6570;
+  color: var(--muted);
 }
 
 .login-card__error {
   margin: 0 0 1rem;
   padding: 0.65rem 0.75rem;
-  border-radius: 0.35rem;
-  background: #fdecea;
-  color: #b42318;
+  border-radius: var(--radius-sm);
+  background: rgba(180, 35, 24, 0.10);
+  color: var(--danger);
+  border: 1px solid rgba(180, 35, 24, 0.18);
   font-size: 0.85rem;
 }
 
@@ -41,20 +48,22 @@
   margin-bottom: 1rem;
   font-size: 0.82rem;
   font-weight: 600;
-  color: #3d4650;
+  color: rgba(17, 24, 39, 0.78);
 }
 
 .login-field input {
   padding: 0.6rem 0.7rem;
-  border: 1px solid #cfd6de;
-  border-radius: 0.35rem;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
   font: inherit;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .login-field input:focus {
-  outline: 2px solid #c45c26;
-  outline-offset: 1px;
-  border-color: #c45c26;
+  outline: none;
+  border-color: rgba(180, 35, 42, 0.35);
+  box-shadow: var(--ring);
 }
 
 .login-card__submit {
@@ -62,11 +71,17 @@
   margin-top: 0.25rem;
   padding: 0.7rem;
   border: none;
-  border-radius: 0.35rem;
-  background: #c45c26;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--primary), var(--primary-2));
   color: #fff;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 10px 24px rgba(180, 35, 42, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-card__submit:hover {
+  transform: translateY(-1px);
 }
 
 .login-card__submit:disabled {
