@@ -51,6 +51,12 @@ export class CreateArticleDto {
   @IsString()
   coverImageUrl?: string;
 
+  /** Yalnız update üçün: true olarsa dərc vaxtını indi et. */
+  @ApiPropertyOptional({ default: false })
+  @IsOptional()
+  @IsBoolean()
+  publishNow?: boolean;
+
   @ApiProperty({ type: [ArticleTranslationDto], minItems: 1, maxItems: 2 })
   @IsArray()
   @ArrayMinSize(1)

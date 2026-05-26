@@ -27,6 +27,7 @@ export function emptyArticleForm(): ArticleFormPayload {
     category: "politics",
     status: "draft",
     isFeatured: false,
+    publishNow: false,
     translations: LOCALES.map(emptyTranslation),
   };
 }
@@ -41,6 +42,7 @@ export function articleToForm(article: AdminArticle): ArticleFormPayload {
     isFeatured: article.isFeatured,
     featuredOrder: article.featuredOrder ?? undefined,
     coverImageUrl: article.coverImageUrl ?? undefined,
+    publishNow: false,
     translations: LOCALES.map(
       (locale) => byLocale.get(locale) ?? emptyTranslation(locale),
     ),
@@ -148,6 +150,7 @@ export function normalizeArticlePayload(
     ...(slug ? { slug } : {}),
     ...(coverImageUrl ? { coverImageUrl } : {}),
     ...(form.featuredOrder != null ? { featuredOrder: form.featuredOrder } : {}),
+    ...(form.publishNow ? { publishNow: true } : {}),
     translations: LOCALES.map((locale) => {
       const t = getTranslation(form, locale);
       const title = t.title.trim();

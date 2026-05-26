@@ -40,5 +40,6 @@ export type ArticleFormPayload = {
   isFeatured?: boolean;
   featuredOrder?: number;
   coverImageUrl?: string;
+  publishNow?: boolean;
   translations: ArticleTranslation[];
 };

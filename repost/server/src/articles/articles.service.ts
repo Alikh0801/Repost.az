@@ -298,7 +298,8 @@ export class ArticlesService {
         : undefined;
 
     const status = dto.status ?? existing.status;
-    const publishedAt = this.resolvePublishedAt(status);
+    const publishNow = dto.publishNow === true;
+    const publishedAt = this.resolvePublishedAtForUpdate(status, publishNow, existing.publishedAt);
 
     let contentUpdate: Prisma.InputJsonValue | undefined;
     if (dto.translations?.length) {
@@ -351,12 +352,25 @@ export class ArticlesService {
     return { deleted: true };
   }
 
-  /** Dərc tarixi həmişə serverdə cari vaxt ilə təyin olunur. */
+  /** Create: dərc olunan xəbərlər üçün indi. */
   private resolvePublishedAt(status: ArticleStatus): Date | null {
     if (status !== ArticleStatus.published) {
       return null;
     }
     return new Date();
+  }
+
+  /** Update: yalnız publishNow=true olarsa publishedAt indi olur; yoxdursa saxlanılır. */
+  private resolvePublishedAtForUpdate(
+    status: ArticleStatus,
+    publishNow: boolean,
+    existingPublishedAt: Date | null,
+  ): Date | null {
+    if (status !== ArticleStatus.published) {
+      return null;
+    }
+    if (publishNow) return new Date();
+    return existingPublishedAt ?? new Date();
   }
 
   private buildSlug(source: string): string {

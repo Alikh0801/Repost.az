@@ -338,6 +338,18 @@ export function ArticleEditPage() {
         </section>
 
         <div className="article-form__actions">
+          {!isNew && (form.status ?? "draft") === "published" ? (
+            <label className="field field--checkbox" style={{ margin: 0 }}>
+              <input
+                type="checkbox"
+                checked={Boolean(form.publishNow)}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, publishNow: e.target.checked }))
+                }
+              />
+              <span>Cari vaxtdan dərc et</span>
+            </label>
+          ) : null}
           <button type="submit" className="btn btn--primary" disabled={saving}>
             {saving ? "Saxlanılır..." : "Yadda saxla"}
           </button>
