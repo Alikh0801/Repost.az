@@ -6,7 +6,7 @@ import type { BilingualListItemDto } from "../types/bilingual";
 import { HOME_VIEW_ID, type CatalogId, type NavViewId } from "../types/catalog";
 import type { FeaturedNewsItem } from "../types/featured-news-item";
 
-/** Üst hissə: yalnız admin-də seçilmiş “Hero” xəbərləri. */
+/** Hero: yalnız admin “Hero” (isFeatured). Ana səhifə: bütün rubrikalar; rubrika tabı: həmin category. */
 export function useHeroNews(view: NavViewId) {
   const { locale } = useI18n();
   const [raw, setRaw] = useState<BilingualListItemDto[]>([]);

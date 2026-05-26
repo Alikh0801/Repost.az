@@ -87,6 +87,7 @@ export class ArticlesService {
   }
 
   private async listFeaturedUncached(category?: Category) {
+    // published + isFeatured; category → yalnız həmin rubrika (navbar hero).
     const articles = await this.prisma.article.findMany({
       where: {
         status: ArticleStatus.published,

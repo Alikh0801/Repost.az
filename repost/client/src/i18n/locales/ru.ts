@@ -34,6 +34,7 @@ export const ru: AppMessages = {
   news: {
     today: "Сегодня",
     views: "просмотров",
+    latestSectionTitle: "Последние новости",
   },
   article: {
     backToHome: "Вернуться на главную",

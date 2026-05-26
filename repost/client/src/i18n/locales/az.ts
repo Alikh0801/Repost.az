@@ -34,6 +34,7 @@ export const az: AppMessages = {
   news: {
     today: "Bugün",
     views: "oxunuş",
+    latestSectionTitle: "Ən son xəbərlər",
   },
   article: {
     backToHome: "Ana səhifəyə qayıt",

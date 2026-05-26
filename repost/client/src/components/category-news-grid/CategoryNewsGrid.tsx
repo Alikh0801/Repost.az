@@ -29,7 +29,7 @@ export function CategoryNewsGrid() {
   }, []);
 
   const sectionLabel = useMemo(() => {
-    if (isHome) return t("nav.home");
+    if (isHome) return t("news.latestSectionTitle");
     const entry = CATALOG.find((item) => item.id === activeView);
     return entry ? t(entry.labelKey) : "";
   }, [activeView, isHome, t]);

@@ -33,6 +33,7 @@ export type AppMessages = {
   news: {
     today: string;
     views: string;
+    latestSectionTitle: string;
   };
   article: {
     backToHome: string;
