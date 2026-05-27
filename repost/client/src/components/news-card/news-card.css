@@ -5,7 +5,6 @@
   height: 100%;
   min-width: 0;
   border-radius: 0.35rem;
-  overflow: hidden;
   background: var(--main-surface);
   border: 1px solid var(--main-border);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -19,10 +18,12 @@
 .news-card__media {
   display: block;
   aspect-ratio: 16 / 10;
-  overflow: hidden;
   position: relative;
   color: inherit;
   text-decoration: none;
+  border-radius: 0.35rem 0.35rem 0 0;
+  /* overflow:hidden + loading=lazy iOS Safari-da şəkli qırır */
+  overflow: clip;
 }
 
 .news-card__category-badge {
@@ -49,11 +50,28 @@
 }
 
 .news-card__image {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
+  border-radius: inherit;
   transition: transform 0.35s ease;
+}
+
+@media (min-width: 900px) {
+  .news-card {
+    overflow: hidden;
+  }
+
+  .news-card__media {
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .news-card__image {
+    border-radius: 0;
+  }
 }
 
 .news-card:hover .news-card__image {

@@ -66,7 +66,7 @@ export function NewsCard({ article, now }: NewsCardProps) {
           className="news-card__image"
           src={article.imageUrl}
           alt={article.imageAlt}
-          loading="lazy"
+          loading="eager"
           decoding="async"
         />
       </Link>

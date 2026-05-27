@@ -219,7 +219,7 @@ export function HeroSlider() {
                 className="hero-slider__image"
                 src={slide.imageUrl}
                 alt={slide.imageAlt}
-                loading={index === 0 ? "eager" : "lazy"}
+                loading="eager"
                 decoding="async"
               />
               <div className="hero-slider__overlay" aria-hidden />

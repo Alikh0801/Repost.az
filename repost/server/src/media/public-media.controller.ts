@@ -34,7 +34,8 @@ export class PublicMediaController {
 
     const ext = extname(filename).toLowerCase();
     res.setHeader("Content-Type", CONTENT_TYPE[ext] ?? "application/octet-stream");
-    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.setHeader("Cache-Control", "public, max-age=86400, immutable");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
     createReadStream(filePath).pipe(res);
   }
 }
