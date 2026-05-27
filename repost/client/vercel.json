@@ -1,4 +1,26 @@
 {
+  "redirects": [
+    {
+      "source": "/category/:legacyId/pg/:page",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/category/:legacyId",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/news/:legacyPostId",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",
