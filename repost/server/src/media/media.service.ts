@@ -67,35 +67,45 @@ export class MediaService {
     const folder = this.config.get<string>("CLOUDINARY_FOLDER")?.trim() || "repost";
 
     if (this.cloudinary) {
-      const uploaded = await new Promise<{
-        secure_url: string;
-        public_id: string;
-        resource_type: string;
-      }>((resolve, reject) => {
-        const stream = this.cloudinary!.uploader.upload_stream(
-          {
-            folder,
-            public_id: filename.replace(/\.[^.]+$/, ""),
-            resource_type: "image",
-            overwrite: false,
-          },
-          (error, result) => {
-            if (error || !result?.secure_url) {
-              reject(error ?? new Error("Cloudinary upload failed"));
-              return;
-            }
-            resolve(result as any);
-          },
+      try {
+        const uploaded = await new Promise<{ secure_url: string }>((resolve, reject) => {
+          const stream = this.cloudinary!.uploader.upload_stream(
+            {
+              folder,
+              public_id: filename.replace(/\.[^.]+$/, ""),
+              resource_type: "image",
+              overwrite: false,
+            },
+            (error, result) => {
+              if (error) {
+                reject(error);
+                return;
+              }
+              if (!result?.secure_url) {
+                reject(new Error("Cloudinary upload returned empty URL"));
+                return;
+              }
+              resolve(result as any);
+            },
+          );
+
+          stream.on("error", (err) => reject(err));
+          stream.end(file.buffer);
+        });
+
+        return {
+          url: uploaded.secure_url,
+          filename,
+          mime,
+        };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        // Render logları üçün real səbəb
+        console.error("[MediaService] Cloudinary upload failed:", message);
+        throw new BadRequestException(
+          "Şəkil yüklənmədi. Cloudinary ayarlarını yoxlayın və yenidən cəhd edin.",
         );
-
-        stream.end(file.buffer);
-      });
-
-      return {
-        url: uploaded.secure_url,
-        filename,
-        mime,
-      };
+      }
     }
 
     // Fallback: local disk (legacy / local dev)
