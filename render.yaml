@@ -37,3 +37,11 @@ services:
         value: "40"
       - key: VIEW_BOOST_INTERVAL_MS
         value: "300000"
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: repost

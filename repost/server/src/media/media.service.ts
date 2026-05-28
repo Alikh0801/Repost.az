@@ -5,6 +5,7 @@ import { mkdir, writeFile } from "fs/promises";
 import { extname, join } from "path";
 import { buildMediaFilePath } from "../common/media-url";
 import { detectImageFromBuffer, mimeFromExtension } from "./detect-image";
+import { initCloudinary } from "./cloudinary.client";
 
 const MIME_TO_EXT: Record<string, string> = {
   "image/jpeg": ".jpg",
@@ -17,7 +18,11 @@ const MAX_BYTES = 5 * 1024 * 1024;
 
 @Injectable()
 export class MediaService {
-  constructor(private readonly config: ConfigService) {}
+  private readonly cloudinary: ReturnType<typeof initCloudinary>;
+
+  constructor(private readonly config: ConfigService) {
+    this.cloudinary = initCloudinary(config);
+  }
 
   async saveImage(file: Express.Multer.File) {
     if (!file) {
@@ -58,10 +63,44 @@ export class MediaService {
       );
     }
 
+    const filename = `${randomUUID()}${extension}`;
+    const folder = this.config.get<string>("CLOUDINARY_FOLDER")?.trim() || "repost";
+
+    if (this.cloudinary) {
+      const uploaded = await new Promise<{
+        secure_url: string;
+        public_id: string;
+        resource_type: string;
+      }>((resolve, reject) => {
+        const stream = this.cloudinary!.uploader.upload_stream(
+          {
+            folder,
+            public_id: filename.replace(/\.[^.]+$/, ""),
+            resource_type: "image",
+            overwrite: false,
+          },
+          (error, result) => {
+            if (error || !result?.secure_url) {
+              reject(error ?? new Error("Cloudinary upload failed"));
+              return;
+            }
+            resolve(result as any);
+          },
+        );
+
+        stream.end(file.buffer);
+      });
+
+      return {
+        url: uploaded.secure_url,
+        filename,
+        mime,
+      };
+    }
+
+    // Fallback: local disk (legacy / local dev)
     const uploadsDir = join(process.cwd(), "uploads");
     await mkdir(uploadsDir, { recursive: true });
-
-    const filename = `${randomUUID()}${extension}`;
     await writeFile(join(uploadsDir, filename), file.buffer);
 
     return {
