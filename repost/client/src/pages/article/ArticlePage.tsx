@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArticleBody } from "../../components/article-body/ArticleBody";
 import { PageContainer } from "../../components/page-container/PageContainer";
 import { RelatedNewsSection } from "../../components/related-news-section/RelatedNewsSection";
 import { SiteNavbar } from "../../components/site-navbar/SiteNavbar";
@@ -135,11 +136,7 @@ export function ArticlePage() {
 
           <p className="article-detail__lead">{article.summary}</p>
 
-          <div className="article-detail__body">
-            {article.body.map((paragraph, index) => (
-              <p key={`${article.id}-p-${index}`}>{paragraph}</p>
-            ))}
-          </div>
+          <ArticleBody body={article.body} />
         </article>
 
         <RelatedNewsSection articleSlug={article.slug} />

@@ -8,8 +8,8 @@ import type {
 export const LOCALES: Locale[] = ["az", "ru"];
 
 export const LOCALE_LABEL: Record<Locale, string> = {
-  az: "Azərbaycan",
-  ru: "Rus",
+  az: "Azərbaycanca",
+  ru: "Rusca",
 };
 
 export function emptyTranslation(locale: Locale): ArticleTranslation {
@@ -54,20 +54,65 @@ export function emptyBodyDraft(): Record<Locale, string> {
 }
 
 export function bodyToText(body: string[]): string {
-  return body.join("\n");
+  return bodyToHtml(body);
 }
 
 export function textToBody(text: string): string[] {
+  return htmlToBody(text);
+}
+
+function escapeHtml(text: string): string {
   return text
-    .split("\n")
-    .map((p) => p.trim())
-    .filter(Boolean);
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function looksLikeHtml(value: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(value);
+}
+
+/** DB-dəki body massivini redaktor HTML-inə çevirir. */
+export function bodyToHtml(body: string[]): string {
+  if (body.length === 0) return "";
+
+  if (body.length === 1 && looksLikeHtml(body[0] ?? "")) {
+    return body[0] ?? "";
+  }
+
+  if (body.some((block) => looksLikeHtml(block))) {
+    return body
+      .map((block) =>
+        looksLikeHtml(block) ? block : `<p>${escapeHtml(block)}</p>`,
+      )
+      .join("");
+  }
+
+  return body.map((block) => `<p>${escapeHtml(block)}</p>`).join("");
+}
+
+/** Redaktor HTML-ini DB body massivinə çevirir. */
+export function htmlToBody(html: string): string[] {
+  const trimmed = html.trim();
+  if (!trimmed || trimmed === "<p></p>") return [];
+  return [trimmed];
+}
+
+export function htmlToPlainText(html: string): string {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function bodyDraftFromForm(form: ArticleFormPayload): Record<Locale, string> {
   return {
-    az: bodyToText(getTranslation(form, "az").body),
-    ru: bodyToText(getTranslation(form, "ru").body),
+    az: bodyToHtml(getTranslation(form, "az").body),
+    ru: bodyToHtml(getTranslation(form, "ru").body),
   };
 }
 
@@ -95,7 +140,7 @@ function ruHasAnyInput(bodyDraft: Record<Locale, string>, t: ArticleTranslation)
   return (
     t.title.trim().length > 0 ||
     t.summary.trim().length > 0 ||
-    textToBody(bodyDraft.ru).length > 0
+    htmlToBody(bodyDraft.ru).length > 0
   );
 }
 
@@ -107,7 +152,7 @@ export function validateArticleForm(
   const az = getTranslation(form, "az");
   const azTitle = az.title.trim();
   const azSummary = az.summary.trim();
-  const azBody = textToBody(bodyDraft.az);
+  const azBody = htmlToBody(bodyDraft.az);
 
   if (azTitle.length < 3) {
     return "Azərbaycan: başlıq ən azı 3 simvol olmalıdır";
@@ -115,7 +160,7 @@ export function validateArticleForm(
   if (azSummary.length < 10) {
     return "Azərbaycan: xülasə ən azı 10 simvol olmalıdır";
   }
-  if (azBody.length < 1) {
+  if (azBody.length < 1 || htmlToPlainText(bodyDraft.az).length < 1) {
     return "Azərbaycan: mətn boş ola bilməz";
   }
 
@@ -130,7 +175,7 @@ export function validateArticleForm(
   if (ru.summary.trim().length < 10) {
     return "Rus: xülasə doldurulubsa, ən azı 10 simvol olmalıdır";
   }
-  if (textToBody(bodyDraft.ru).length < 1) {
+  if (textToBody(bodyDraft.ru).length < 1 || htmlToPlainText(bodyDraft.ru).length < 1) {
     return "Rus: mətn doldurulubsa, boş ola bilməz";
   }
 

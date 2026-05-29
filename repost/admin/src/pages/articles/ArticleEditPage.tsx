@@ -23,6 +23,7 @@ import {
 } from "../../lib/article-form";
 import { formatApiError } from "../../lib/format-api-error";
 import { resolveMediaUrl } from "../../lib/resolve-media-url";
+import { RichTextEditor } from "../../components/rich-text-editor/RichTextEditor";
 import type { ArticleFormPayload, ArticleStatus, Locale } from "../../types/article";
 import "./articles.css";
 
@@ -44,6 +45,7 @@ export function ArticleEditPage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bodyDraft, setBodyDraft] = useState(emptyBodyDraft);
+  const [bodyUploading, setBodyUploading] = useState(false);
 
   useEffect(() => {
     if (isNew) return;
@@ -310,31 +312,28 @@ export function ArticleEditPage() {
               />
             </label>
 
-            <label className="field">
-              <span>
-                Mətn (Enter — yeni sətir / abzas)
-                {localeRequired ? " *" : ", istəyə görə"}
-              </span>
-              <textarea
-                rows={12}
-                value={bodyDraft[activeLocale]}
-                onChange={(e) =>
-                  setBodyDraft((prev) => ({
-                    ...prev,
-                    [activeLocale]: e.target.value,
-                  }))
-                }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") e.stopPropagation();
-                }}
-                required={localeRequired}
-              />
-            </label>
+            <RichTextEditor
+              key={activeLocale}
+              value={bodyDraft[activeLocale]}
+              localeLabel={LOCALE_LABEL[activeLocale]}
+              required={localeRequired}
+              onChange={(html) =>
+                setBodyDraft((prev) => ({
+                  ...prev,
+                  [activeLocale]: html,
+                }))
+              }
+              onUploadStateChange={setBodyUploading}
+              onError={(message) => setError(message)}
+            />
+            {bodyUploading ? (
+              <span className="admin-muted">Mətn şəkli yüklənir...</span>
+            ) : null}
           </div>
         </section>
 
         <div className="article-form__actions">
-          <button type="submit" className="btn btn--primary" disabled={saving}>
+          <button type="submit" className="btn btn--primary" disabled={saving || bodyUploading}>
             {saving ? "Saxlanılır..." : "Yadda saxla"}
           </button>
           {!isNew && (form.status ?? "draft") === "published" ? (
