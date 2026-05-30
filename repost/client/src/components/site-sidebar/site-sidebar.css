@@ -85,20 +85,13 @@
 }
 
 .site-sidebar__block--grow {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.site-sidebar__bottom {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
   margin-top: auto;
-  width: 100%;
+  margin-bottom: 0;
 }
 
 .site-sidebar__block--social {
   flex-shrink: 0;
+  margin-bottom: 0;
 }
 
 .site-sidebar__footer {
@@ -360,8 +353,20 @@
 }
 
 @media (min-width: 900px) {
+  .site-sidebar__tools {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 100%;
+    gap: 1.25rem;
+  }
+
+  .site-sidebar__block--lang {
+    margin-bottom: 0;
+  }
+
   .site-sidebar__block--social {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.75rem;
   }
 
   .site-sidebar__social {
@@ -405,7 +410,6 @@
 .site-sidebar__tools {
   display: contents;
 }
-
 /* Mobil: üfüqi toolbar — navbarın üstündə */
 @media (max-width: 899px) {
   .site-sidebar {
@@ -516,14 +520,6 @@
     gap: 0.35rem;
     flex-shrink: 0;
     margin-left: auto;
-  }
-
-  .site-sidebar__bottom {
-    display: contents;
-  }
-
-  .site-sidebar__block--social {
-    margin-bottom: 0;
   }
 
   .site-sidebar__block {

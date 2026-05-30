@@ -200,9 +200,7 @@ export function SiteSidebar() {
           </button>
         </div>
       </section>
-      </div>
 
-      <div className="site-sidebar__bottom">
       {hasSocialLinks ? (
         <section className="site-sidebar__block site-sidebar__block--social">
           <nav className="site-sidebar__social" aria-label={t("sidebar.social")}>
@@ -254,6 +252,7 @@ export function SiteSidebar() {
           </nav>
         </section>
       ) : null}
+      </div>
 
       <footer
         className="site-sidebar__footer site-sidebar__block site-sidebar__block--grow"
@@ -278,7 +277,6 @@ export function SiteSidebar() {
           </a>
         </p>
       </footer>
-      </div>
     </aside>
   );
 }
