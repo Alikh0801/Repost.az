@@ -23,7 +23,7 @@ export function toArticleListItem(article: ArticleRow) {
   return {
     id: article.id,
     slug: article.slug,
-    category: article.category,
+    category: article.categorySlug,
     imageUrl: publicImageUrl(article.coverImageUrl),
     publishedAt:
       article.publishedAt?.toISOString() ?? article.createdAt.toISOString(),
@@ -50,7 +50,7 @@ export function toArticleDetail(article: ArticleRow) {
   return {
     id: article.id,
     slug: article.slug,
-    category: article.category,
+    category: article.categorySlug,
     imageUrl: publicImageUrl(article.coverImageUrl),
     publishedAt:
       article.publishedAt?.toISOString() ?? article.createdAt.toISOString(),
@@ -69,7 +69,7 @@ export function toAdminArticle(article: ArticleRow) {
   return {
     id: article.id,
     slug: article.slug,
-    category: article.category,
+    category: article.categorySlug,
     status: article.status,
     isFeatured: article.isFeatured,
     featuredOrder: article.featuredOrder,

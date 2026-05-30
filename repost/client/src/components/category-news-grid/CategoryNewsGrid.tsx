@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
 import { useNewsFeed } from "../../shared/hooks/use-news-feed";
-import { CATALOG, HOME_VIEW_ID } from "../../shared/types/catalog";
+import { HOME_VIEW_ID } from "../../shared/types/catalog";
 import { NewsCard } from "../news-card/NewsCard";
 import "./category-news-grid.css";
 
@@ -10,7 +10,7 @@ const CLOCK_TICK_MS = 60_000;
 
 export function CategoryNewsGrid() {
   const { t } = useI18n();
-  const { activeView } = useCatalog();
+  const { activeView, categoryLabel } = useCatalog();
   const [now, setNow] = useState(() => new Date());
   const { articles, loading, error } = useNewsFeed(activeView);
   const isHome = activeView === HOME_VIEW_ID;
@@ -30,9 +30,8 @@ export function CategoryNewsGrid() {
 
   const sectionLabel = useMemo(() => {
     if (isHome) return t("news.latestSectionTitle");
-    const entry = CATALOG.find((item) => item.id === activeView);
-    return entry ? t(entry.labelKey) : "";
-  }, [activeView, isHome, t]);
+    return categoryLabel(activeView);
+  }, [activeView, categoryLabel, isHome, t]);
 
   return (
     <section

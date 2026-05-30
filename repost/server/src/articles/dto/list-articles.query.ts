@@ -1,19 +1,13 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { Category } from "@prisma/client";
 import { Type } from "class-transformer";
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  Max,
-  Min,
-} from "class-validator";
+import { IsInt, IsOptional, IsString, Max, Min, MinLength } from "class-validator";
 
 export class ListArticlesQuery {
-  @ApiPropertyOptional({ enum: Category })
+  @ApiPropertyOptional({ example: "politics" })
   @IsOptional()
-  @IsEnum(Category)
-  category?: Category;
+  @IsString()
+  @MinLength(2)
+  category?: string;
 
   @ApiPropertyOptional({ default: 1 })
   @IsOptional()

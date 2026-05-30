@@ -1,10 +1,4 @@
-export type CategoryId =
-  | "politics"
-  | "economy"
-  | "society"
-  | "sports"
-  | "incidents"
-  | "world";
+export type CategoryId = string;
 
 export type ArticleStatus = "draft" | "published" | "archived";
 

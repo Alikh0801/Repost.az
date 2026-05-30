@@ -14,6 +14,14 @@ export function AdminLayout() {
         </div>
         <nav className="admin-shell__nav">
           <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `admin-shell__link${isActive ? " admin-shell__link--active" : ""}`
+            }
+          >
+            İdarəetmə paneli
+          </NavLink>
+          <NavLink
             to="/articles"
             className={({ isActive }) =>
               `admin-shell__link${isActive ? " admin-shell__link--active" : ""}`

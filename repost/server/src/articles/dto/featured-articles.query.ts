@@ -1,11 +1,10 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { Category } from "@prisma/client";
-import { IsEnum, IsOptional } from "class-validator";
+import { IsOptional, IsString, MinLength } from "class-validator";
 
 export class FeaturedArticlesQuery {
-  @ApiPropertyOptional({ enum: Category })
+  @ApiPropertyOptional({ example: "politics" })
   @IsOptional()
-  @IsEnum(Category)
-  category?: Category;
+  @IsString()
+  @MinLength(2)
+  category?: string;
 }
-

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
-import { CATALOG } from "../../shared/types/catalog";
 import type { CategoryNewsItem } from "../../shared/types/category-news-item";
 import { articlePath } from "../../shared/lib/article-path";
 import { formatNewsPublished } from "../../shared/lib/format-news-published";
@@ -34,10 +34,12 @@ function EyeIcon() {
 export function NewsCard({ article, now }: NewsCardProps) {
   const { locale, t } = useI18n();
 
-  const categoryLabel = useMemo(() => {
-    const entry = CATALOG.find((c) => c.id === article.category);
-    return entry ? t(entry.labelKey) : "";
-  }, [article.category, t]);
+  const { categoryLabel } = useCatalog();
+
+  const categoryLabelText = useMemo(
+    () => categoryLabel(article.category),
+    [article.category, categoryLabel],
+  );
 
   const publishedLabel = useMemo(
     () => formatNewsPublished(article.publishedAt, locale, t("news.today"), now),
@@ -59,8 +61,8 @@ export function NewsCard({ article, now }: NewsCardProps) {
         tabIndex={-1}
         aria-hidden
       >
-        {categoryLabel ? (
-          <span className="news-card__category-badge">{categoryLabel}</span>
+        {categoryLabelText ? (
+          <span className="news-card__category-badge">{categoryLabelText}</span>
         ) : null}
         <img
           className="news-card__image"

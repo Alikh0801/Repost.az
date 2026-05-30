@@ -2,24 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
-import type { AppMessagePath } from "../../i18n/paths";
 import { useHeroNews } from "../../shared/hooks/use-hero-news";
 import { articlePath } from "../../shared/lib/article-path";
-import type { CatalogId } from "../../shared/types/catalog";
 import { formatArticleDate } from "../../shared/lib/format-article-date";
 import "./hero-slider.css";
 
 const AUTOPLAY_MS = 6000;
 const SWIPE_THRESHOLD_PX = 48;
-
-const CATEGORY_PATH: Record<CatalogId, AppMessagePath> = {
-  politics: "nav.politics",
-  economy: "nav.economy",
-  society: "nav.society",
-  sports: "nav.sports",
-  incidents: "nav.incidents",
-  world: "nav.world",
-};
 
 function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   return (
@@ -44,7 +33,7 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
 
 export function HeroSlider() {
   const { locale, t } = useI18n();
-  const { activeView } = useCatalog();
+  const { activeView, categoryLabel } = useCatalog();
   const { items: slides, loading } = useHeroNews(activeView);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -225,7 +214,7 @@ export function HeroSlider() {
               <div className="hero-slider__overlay" aria-hidden />
               <div className="hero-slider__content">
                 <span className="hero-slider__category">
-                  {t(CATEGORY_PATH[slide.category])}
+                  {categoryLabel(slide.category)}
                 </span>
                 <time
                   className="hero-slider__date"

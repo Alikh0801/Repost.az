@@ -7,7 +7,7 @@ import {
 } from "../../api/articles";
 import { ApiError } from "../../api/client";
 import { uploadImage } from "../../api/media";
-import { CATEGORIES } from "../../constants/categories";
+import { useCategories } from "../../hooks/use-categories";
 import {
   articleToForm,
   bodyDraftFromForm,
@@ -76,6 +76,8 @@ export function ArticleEditPage() {
     };
   }, [id, isNew]);
 
+  const { categories } = useCategories();
+  const categoryOptions = categories.map((c) => ({ id: c.slug, label: c.labelAz }));
   const translation = getTranslation(form, activeLocale);
   const localeRequired = activeLocale === "az";
 
@@ -172,7 +174,7 @@ export function ArticleEditPage() {
                   }))
                 }
               >
-                {CATEGORIES.map((c) => (
+                {categoryOptions.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.label}
                   </option>

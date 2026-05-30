@@ -3,10 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { ArticleStatus, Category, Prisma } from "@prisma/client";
+import { ArticleStatus, Prisma } from "@prisma/client";
 import slugify from "slugify";
 import { normalizeStoredMediaUrl } from "../common/media-url";
 import { TtlCache } from "../common/ttl-cache";
+import { CategoriesService } from "../categories/categories.service";
 import { PrismaService } from "../prisma/prisma.service";
 import {
   assertAzLocale,
@@ -35,7 +36,10 @@ export class ArticlesService {
   private readonly viewThrottle = new Map<string, number>();
   private readonly viewThrottleMs = 60_000;
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly categoriesService: CategoriesService,
+  ) {}
 
   async listPublic(category?: string, page = 1, limit = 20) {
     const cacheKey = `list:${category ?? "all"}:${page}:${limit}`;
@@ -54,7 +58,7 @@ export class ArticlesService {
   private async listPublicUncached(category?: string, page = 1, limit = 20) {
     const where: Prisma.ArticleWhereInput = {
       status: ArticleStatus.published,
-      ...(category ? { category: category as Category } : {}),
+      ...(category ? { categorySlug: category } : {}),
     };
 
     const [total, articles] = await Promise.all([
@@ -76,7 +80,7 @@ export class ArticlesService {
     };
   }
 
-  async listFeatured(category?: Category) {
+  async listFeatured(category?: string) {
     const cacheKey = `featured:${category ?? "all"}`;
     const cached = this.featuredCache.get(cacheKey);
     if (cached) return cached;
@@ -86,13 +90,13 @@ export class ArticlesService {
     return items;
   }
 
-  private async listFeaturedUncached(category?: Category) {
+  private async listFeaturedUncached(category?: string) {
     // published + isFeatured; category → yalnız həmin rubrika (navbar hero).
     const articles = await this.prisma.article.findMany({
       where: {
         status: ArticleStatus.published,
         isFeatured: true,
-        ...(category ? { category } : {}),
+        ...(category ? { categorySlug: category } : {}),
       },
       orderBy: [{ featuredOrder: "asc" }, { publishedAt: "desc" }],
       take: 10,
@@ -151,9 +155,11 @@ export class ArticlesService {
       take: 50,
     });
 
-    const sameCategory = candidates.filter((a) => a.category === current.category);
+    const sameCategory = candidates.filter(
+      (a) => a.categorySlug === current.categorySlug,
+    );
     const otherCategories = candidates.filter(
-      (a) => a.category !== current.category,
+      (a) => a.categorySlug !== current.categorySlug,
     );
 
     const ordered = [...sameCategory, ...otherCategories].slice(0, limit);
@@ -187,6 +193,8 @@ export class ArticlesService {
     }
 
     this.viewThrottle.set(throttleKey, now + this.viewThrottleMs);
+    await this.recordDailyView();
+
     if (this.viewThrottle.size > 8_000) {
       for (const [key, until] of this.viewThrottle) {
         if (until <= now) this.viewThrottle.delete(key);
@@ -232,6 +240,7 @@ export class ArticlesService {
 
   async create(dto: CreateArticleDto, userId: string) {
     assertAzLocale(dto.translations);
+    await this.categoriesService.ensureExists(dto.category);
     const azTitle =
       dto.translations.find((t) => t.locale === "az")?.title ?? "";
     const baseSlug =
@@ -270,7 +279,7 @@ export class ArticlesService {
     const article = await this.prisma.article.create({
       data: {
         slug,
-        category: dto.category,
+        categorySlug: dto.category,
         status,
         isFeatured: dto.isFeatured ?? false,
         featuredOrder: dto.featuredOrder,
@@ -290,6 +299,10 @@ export class ArticlesService {
 
     if (!existing) {
       throw new NotFoundException("Article not found");
+    }
+
+    if (dto.category !== undefined) {
+      await this.categoriesService.ensureExists(dto.category);
     }
 
     const slug =
@@ -313,7 +326,7 @@ export class ArticlesService {
           where: { id },
           data: {
             ...(slug !== undefined ? { slug } : {}),
-            ...(dto.category !== undefined ? { category: dto.category } : {}),
+            ...(dto.category !== undefined ? { categorySlug: dto.category } : {}),
             ...(dto.status !== undefined ? { status: dto.status } : {}),
             ...(dto.isFeatured !== undefined
               ? { isFeatured: dto.isFeatured }
@@ -375,5 +388,16 @@ export class ArticlesService {
 
   private buildSlug(source: string): string {
     return slugify(source, { lower: true, strict: true, locale: "az" });
+  }
+
+  private async recordDailyView() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    await this.prisma.dailyViewStat.upsert({
+      where: { date: today },
+      create: { date: today, views: 1 },
+      update: { views: { increment: 1 } },
+    });
   }
 }

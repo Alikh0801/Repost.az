@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { ArticleStatus, Category } from "@prisma/client";
+import { ArticleStatus } from "@prisma/client";
 import { Transform, Type } from "class-transformer";
 import {
   ArrayMinSize,
@@ -24,9 +24,10 @@ export class CreateArticleDto {
   @MinLength(3)
   slug?: string;
 
-  @ApiProperty({ enum: Category })
-  @IsEnum(Category)
-  category!: Category;
+  @ApiProperty({ example: "politics" })
+  @IsString()
+  @MinLength(2)
+  category!: string;
 
   @ApiPropertyOptional({ enum: ArticleStatus, default: ArticleStatus.draft })
   @IsOptional()

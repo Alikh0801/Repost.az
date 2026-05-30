@@ -8,15 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum Category {
-  politics
-  economy
-  society
-  sports
-  incidents
-  world
-}
-
 enum ArticleStatus {
   draft
   published
@@ -40,23 +31,43 @@ model User {
   @@map("users")
 }
 
-model Article {
-  id            String        @id @default(uuid())
-  slug          String        @unique
-  category      Category
-  status        ArticleStatus @default(draft)
-  isFeatured    Boolean       @default(false) @map("is_featured")
-  featuredOrder Int?          @map("featured_order")
-  coverImageUrl String?       @map("cover_image_url")
-  publishedAt   DateTime?     @map("published_at")
-  viewCount     Int           @default(0) @map("view_count")
-  content       Json
-  createdById   String?       @map("created_by_id")
-  createdBy     User?         @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @updatedAt @map("updated_at")
+model CategoryRecord {
+  slug      String   @id
+  labelAz   String   @map("label_az")
+  labelRu   String   @map("label_ru")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  articles  Article[]
 
-  @@index([category, status, publishedAt])
+  @@map("categories")
+}
+
+model DailyViewStat {
+  date  DateTime @id @db.Date
+  views Int      @default(0)
+
+  @@map("daily_view_stats")
+}
+
+model Article {
+  id            String         @id @default(uuid())
+  slug          String         @unique
+  categorySlug  String         @map("category_slug")
+  category      CategoryRecord @relation(fields: [categorySlug], references: [slug], onDelete: Restrict)
+  status        ArticleStatus  @default(draft)
+  isFeatured    Boolean        @default(false) @map("is_featured")
+  featuredOrder Int?           @map("featured_order")
+  coverImageUrl String?        @map("cover_image_url")
+  publishedAt   DateTime?      @map("published_at")
+  viewCount     Int            @default(0) @map("view_count")
+  content       Json
+  createdById   String?        @map("created_by_id")
+  createdBy     User?          @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@index([categorySlug, status, publishedAt])
   @@index([isFeatured, featuredOrder])
   @@map("articles")
 }

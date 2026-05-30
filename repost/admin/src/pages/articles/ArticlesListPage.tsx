@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { deleteArticle, fetchArticles } from "../../api/articles";
 import { ApiError } from "../../api/client";
-import { CATEGORY_LABEL } from "../../constants/categories";
+import { categoryLabel, useCategories } from "../../hooks/use-categories";
 import type { AdminArticle } from "../../types/article";
 import "./articles.css";
 
@@ -13,6 +13,7 @@ const STATUS_LABEL: Record<AdminArticle["status"], string> = {
 };
 
 export function ArticlesListPage() {
+  const { categories } = useCategories();
   const [articles, setArticles] = useState<AdminArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +91,7 @@ export function ArticlesListPage() {
                     <span className="admin-table__title">{titleFor(article)}</span>
                     <span className="admin-table__slug">{article.slug}</span>
                   </td>
-                  <td>{CATEGORY_LABEL[article.category]}</td>
+                  <td>{categoryLabel(categories, article.category)}</td>
                   <td>
                     <span
                       className={`status-pill status-pill--${article.status}`}

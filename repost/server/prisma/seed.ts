@@ -1,12 +1,16 @@
-import {
-  ArticleStatus,
-  Category,
-  PrismaClient,
-  UserRole,
-} from "@prisma/client";
+import { ArticleStatus, PrismaClient, UserRole } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
+
+const DEFAULT_CATEGORIES = [
+  { slug: "politics", labelAz: "Siyasət", labelRu: "Политика", sortOrder: 1 },
+  { slug: "economy", labelAz: "İqtisadiyyat", labelRu: "Экономика", sortOrder: 2 },
+  { slug: "society", labelAz: "Sosial", labelRu: "Общество", sortOrder: 3 },
+  { slug: "sports", labelAz: "İdman", labelRu: "Спорт", sortOrder: 4 },
+  { slug: "incidents", labelAz: "Hadisə", labelRu: "Происшествия", sortOrder: 5 },
+  { slug: "world", labelAz: "Dünya", labelRu: "Мир", sortOrder: 6 },
+] as const;
 
 const sampleContent = {
   az: {
@@ -49,6 +53,18 @@ async function main() {
     console.log(`Admin user created: ${email}`);
   }
 
+  for (const category of DEFAULT_CATEGORIES) {
+    await prisma.categoryRecord.upsert({
+      where: { slug: category.slug },
+      create: category,
+      update: {
+        labelAz: category.labelAz,
+        labelRu: category.labelRu,
+        sortOrder: category.sortOrder,
+      },
+    });
+  }
+
   const articleCount = await prisma.article.count();
   if (articleCount > 0) {
     console.log("Articles already seeded, skipping.");
@@ -58,7 +74,7 @@ async function main() {
   await prisma.article.create({
     data: {
       slug: "parlamentde-budce-muzakireleri",
-      category: Category.politics,
+      categorySlug: "politics",
       status: ArticleStatus.published,
       isFeatured: true,
       featuredOrder: 1,

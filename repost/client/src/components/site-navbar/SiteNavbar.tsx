@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
 import {
-  CATALOG,
   HOME_VIEW_ID,
   type CatalogId,
 } from "../../shared/types/catalog";
@@ -15,7 +14,7 @@ const NAVBAR_DATE_TICK_MS = 60_000;
 
 export function SiteNavbar() {
   const { locale, t } = useI18n();
-  const { activeView, setActiveView } = useCatalog();
+  const { activeView, setActiveView, catalog } = useCatalog();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [now, setNow] = useState(() => new Date());
@@ -53,7 +52,7 @@ export function SiteNavbar() {
         </time>
         <nav className="site-navbar__nav" aria-label={t("nav.ariaLabel")}>
           <ul className="site-nav__list">
-            {CATALOG.map(({ id, labelKey }) => (
+            {catalog.map(({ id, labelAz, labelRu }) => (
               <li key={id} className="site-nav__item">
                 <button
                   type="button"
@@ -62,7 +61,7 @@ export function SiteNavbar() {
                   aria-pressed={activeView === id}
                   onClick={() => selectCategory(id)}
                 >
-                  {t(labelKey)}
+                  {locale === "ru" ? labelRu : labelAz}
                 </button>
               </li>
             ))}
