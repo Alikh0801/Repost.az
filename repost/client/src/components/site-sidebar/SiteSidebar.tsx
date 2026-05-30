@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
+import { useSocialLinks } from "../../shared/hooks/use-social-links";
 import { HOME_VIEW_ID } from "../../shared/types/catalog";
 import { useTheme } from "../../theme";
 import "./site-sidebar.css";
@@ -109,7 +110,13 @@ export function SiteSidebar() {
   const { locale, setLocale, t } = useI18n();
   const { theme, toggleTheme } = useTheme();
   const { setActiveView } = useCatalog();
+  const { links: socialLinks } = useSocialLinks();
   const isDark = theme === "dark";
+
+  const hasSocialLinks =
+    Boolean(socialLinks.instagramUrl) ||
+    Boolean(socialLinks.facebookUrl) ||
+    Boolean(socialLinks.telegramUrl);
 
   const goHome = () => {
     setActiveView(HOME_VIEW_ID);
@@ -194,49 +201,57 @@ export function SiteSidebar() {
         </div>
       </section>
 
-      <section className="site-sidebar__block site-sidebar__block--social">
-        <nav className="site-sidebar__social" aria-label={t("sidebar.social")}>
-          <a
-            className="site-sidebar__social-link"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={t("sidebar.socialInstagram")}
-            title={t("sidebar.socialInstagram")}
-          >
-            <InstagramIcon />
-            <span className="site-sidebar__social-text">
-              {t("sidebar.socialInstagram")}
-            </span>
-          </a>
-          <a
-            className="site-sidebar__social-link"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={t("sidebar.socialFacebook")}
-            title={t("sidebar.socialFacebook")}
-          >
-            <FacebookIcon />
-            <span className="site-sidebar__social-text">
-              {t("sidebar.socialFacebook")}
-            </span>
-          </a>
-          <a
-            className="site-sidebar__social-link"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={t("sidebar.socialTelegram")}
-            title={t("sidebar.socialTelegram")}
-          >
-            <TelegramIcon />
-            <span className="site-sidebar__social-text">
-              {t("sidebar.socialTelegram")}
-            </span>
-          </a>
-        </nav>
-      </section>
+      {hasSocialLinks ? (
+        <section className="site-sidebar__block site-sidebar__block--social">
+          <nav className="site-sidebar__social" aria-label={t("sidebar.social")}>
+            {socialLinks.instagramUrl ? (
+              <a
+                className="site-sidebar__social-link"
+                href={socialLinks.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t("sidebar.socialInstagram")}
+                title={t("sidebar.socialInstagram")}
+              >
+                <InstagramIcon />
+                <span className="site-sidebar__social-text">
+                  {t("sidebar.socialInstagram")}
+                </span>
+              </a>
+            ) : null}
+            {socialLinks.facebookUrl ? (
+              <a
+                className="site-sidebar__social-link"
+                href={socialLinks.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t("sidebar.socialFacebook")}
+                title={t("sidebar.socialFacebook")}
+              >
+                <FacebookIcon />
+                <span className="site-sidebar__social-text">
+                  {t("sidebar.socialFacebook")}
+                </span>
+              </a>
+            ) : null}
+            {socialLinks.telegramUrl ? (
+              <a
+                className="site-sidebar__social-link"
+                href={socialLinks.telegramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t("sidebar.socialTelegram")}
+                title={t("sidebar.socialTelegram")}
+              >
+                <TelegramIcon />
+                <span className="site-sidebar__social-text">
+                  {t("sidebar.socialTelegram")}
+                </span>
+              </a>
+            ) : null}
+          </nav>
+        </section>
+      ) : null}
       </div>
 
       <footer

@@ -22,6 +22,14 @@ export function AdminLayout() {
             İdarəetmə paneli
           </NavLink>
           <NavLink
+            to="/social"
+            className={({ isActive }) =>
+              `admin-shell__link${isActive ? " admin-shell__link--active" : ""}`
+            }
+          >
+            Sosial şəbəkələr
+          </NavLink>
+          <NavLink
             to="/articles"
             className={({ isActive }) =>
               `admin-shell__link${isActive ? " admin-shell__link--active" : ""}`

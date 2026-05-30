@@ -8,6 +8,7 @@ import { HealthModule } from "./health/health.module";
 import { MediaModule } from "./media/media.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SeoModule } from "./seo/seo.module";
+import { SettingsModule } from "./settings/settings.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SeoModule } from "./seo/seo.module";
     ArticlesModule,
     MediaModule,
     SeoModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}

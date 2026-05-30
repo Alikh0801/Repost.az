@@ -5,6 +5,7 @@ import { ArticleEditPage } from "./pages/articles/ArticleEditPage";
 import { ArticlesListPage } from "./pages/articles/ArticlesListPage";
 import { DashboardPage } from "./pages/dashboard/DashboardPage";
 import { LoginPage } from "./pages/login/LoginPage";
+import { SocialLinksPage } from "./pages/social/SocialLinksPage";
 
 export function AppRouter() {
   return (
@@ -18,6 +19,7 @@ export function AppRouter() {
             <Route path="/articles" element={<ArticlesListPage />} />
             <Route path="/articles/new" element={<ArticleEditPage key="new" />} />
             <Route path="/articles/:id" element={<ArticleEditPage />} />
+            <Route path="/social" element={<SocialLinksPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

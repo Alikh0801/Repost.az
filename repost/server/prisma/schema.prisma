@@ -50,6 +50,16 @@ model DailyViewStat {
   @@map("daily_view_stats")
 }
 
+model SiteSettings {
+  id           String   @id @default("default")
+  instagramUrl String?  @map("instagram_url")
+  facebookUrl  String?  @map("facebook_url")
+  telegramUrl  String?  @map("telegram_url")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}
+
 model Article {
   id            String         @id @default(uuid())
   slug          String         @unique
