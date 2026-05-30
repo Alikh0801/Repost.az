@@ -20,8 +20,15 @@ export function fetchFeaturedNewsByCategory(category?: CatalogId) {
   return apiGet<BilingualListItemDto[]>(`/articles/featured?${params}`);
 }
 
-export function fetchRecentNews(limit = 50, category?: CatalogId) {
-  const params = new URLSearchParams({ limit: String(limit) });
+export function fetchRecentNews(
+  limit = 24,
+  category?: CatalogId,
+  page = 1,
+) {
+  const params = new URLSearchParams({
+    limit: String(limit),
+    page: String(page),
+  });
   if (category) params.set("category", category);
   return apiGet<ArticlesPageDto>(`/articles?${params}`);
 }

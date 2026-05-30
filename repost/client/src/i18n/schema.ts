@@ -34,6 +34,9 @@ export type AppMessages = {
     today: string;
     views: string;
     latestSectionTitle: string;
+    paginationPrev: string;
+    paginationNext: string;
+    paginationAria: string;
   };
   article: {
     backToHome: string;

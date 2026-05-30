@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCatalog } from "../../app/context/catalog-context";
 import { useI18n } from "../../i18n";
 import { useNewsFeed } from "../../shared/hooks/use-news-feed";
@@ -12,7 +12,16 @@ export function CategoryNewsGrid() {
   const { t } = useI18n();
   const { activeView, categoryLabel } = useCatalog();
   const [now, setNow] = useState(() => new Date());
-  const { articles, loading, error } = useNewsFeed(activeView);
+  const sectionRef = useRef<HTMLElement>(null);
+  const skipScrollRef = useRef(true);
+  const {
+    articles,
+    loading,
+    error,
+    page,
+    totalPages,
+    setPage,
+  } = useNewsFeed(activeView);
   const isHome = activeView === HOME_VIEW_ID;
 
   useEffect(() => {
@@ -28,13 +37,25 @@ export function CategoryNewsGrid() {
     };
   }, []);
 
+  useEffect(() => {
+    if (skipScrollRef.current) {
+      skipScrollRef.current = false;
+      return;
+    }
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [page, activeView]);
+
   const sectionLabel = useMemo(() => {
     if (isHome) return t("news.latestSectionTitle");
     return categoryLabel(activeView);
   }, [activeView, categoryLabel, isHome, t]);
 
+  const canGoPrev = page > 1;
+  const canGoNext = page < totalPages;
+
   return (
     <section
+      ref={sectionRef}
       className="category-news-grid"
       aria-labelledby="category-news-grid-heading"
     >
@@ -66,6 +87,33 @@ export function CategoryNewsGrid() {
             </li>
           ))}
         </ul>
+      ) : null}
+
+      {!loading && !error && totalPages > 1 ? (
+        <nav
+          className="category-news-grid__pagination"
+          aria-label={t("news.paginationAria")}
+        >
+          <button
+            type="button"
+            className="category-news-grid__page-btn"
+            disabled={!canGoPrev}
+            onClick={() => setPage(page - 1)}
+          >
+            ← {t("news.paginationPrev")}
+          </button>
+          <span className="category-news-grid__page-status">
+            {page} / {totalPages}
+          </span>
+          <button
+            type="button"
+            className="category-news-grid__page-btn"
+            disabled={!canGoNext}
+            onClick={() => setPage(page + 1)}
+          >
+            {t("news.paginationNext")} →
+          </button>
+        </nav>
       ) : null}
     </section>
   );

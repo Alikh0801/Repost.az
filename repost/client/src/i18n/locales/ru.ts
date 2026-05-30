@@ -35,6 +35,9 @@ export const ru: AppMessages = {
     today: "Сегодня",
     views: "просмотров",
     latestSectionTitle: "Последние новости",
+    paginationPrev: "Назад",
+    paginationNext: "Далее",
+    paginationAria: "Страницы новостей",
   },
   article: {
     backToHome: "Вернуться на главную",
